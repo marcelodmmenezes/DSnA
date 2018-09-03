@@ -6,21 +6,37 @@
  * Marcelo de Matos Menezes - 75254                                           *
  *                                                                            *
  *****************************************************************************/
-https://www.coders-hub.com/2015/07/red-black-tree-rb-tree-using-c.html#.W37zQuhKjIU
+
+//https://www.coders-hub.com/2015/07/red-black-tree-rb-tree-using-c.html#.W41ogXVKi2x
+//https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
+
+
+#define RBT_DEBUG
+
 
 #ifndef RBT_MULTISET_HPP
 #define RBT_MULTISET_HPP
 
 
-//------------------------------------------------------------------ Definições
+#ifdef RBT_DEBUG
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <queue>
+#endif	// RBT_DEBUG
+
+
+//***** DEFINIÇÕES *****//
 
 #define RED true
 #define BLACK false
+
 typedef bool Color;
 
 
 template <typename T>
 struct RBTNode {
+	RBTNode() : parent(nullptr), left(nullptr), right(nullptr) {}
 	RBTNode(T k, Color c) : key(k), color(c), count(1ll),
 		parent(nullptr), left(nullptr), right(nullptr) {}
 
@@ -36,7 +52,6 @@ struct RBTNode {
 template<typename T>
 class RBTMultiset {
 public:
-	//-------------------------------------------------- Construtores/Destrutor
 	RBTMultiset();
 	~RBTMultiset();
 	
@@ -82,6 +97,9 @@ public:
 	//-------------------------------------------------------------------------
 
 	//--------------------------------------------------------------- Depuração
+#ifdef RBT_DEBUG
+	void print();
+#endif	// RBT_DEBUG
 	//-------------------------------------------------------------------------
 
 private:
@@ -89,6 +107,7 @@ private:
 	void balance(RBTNode<T>* node);
 	void leftRotate(RBTNode<T>* node);
 	void rightRotate(RBTNode<T>* node);
+	//-------------------------------------------------------------------------
 
 	RBTNode<T>* m_root;
 
@@ -96,7 +115,7 @@ private:
 };
 
 
-//-------------------------------------------------------------- Implementações
+//***** IMPLEMENTAÇÕES *****//
 
 template <typename T>
 RBTMultiset<T>::RBTMultiset() : m_root(nullptr), m_size(0u) {}
@@ -123,17 +142,18 @@ void RBTMultiset<T>::insert(const T& key) {
 		m_root = new RBTNode<T>(key, BLACK);
 	else {
 		bool already_in_tree = false;
-		RBTNode<T>* itr = m_root, parent;
+		RBTNode<T>* itr = m_root;
+		RBTNode<T>* parent;
 
 		// Procura o lugar onde o elemento deve ser inserido.
 		while (itr && !already_in_tree) {
 			parent = itr;
 
-			if (key == itr.key) { // Elemento já está na árvore.
-				itr.key++;
+			if (key == itr->key) { // Elemento já está na árvore.
+				itr->key++;
 				already_in_tree = true;
 			}
-			else if (key < itr.key) // Deve ser inserido na subárvore esquerda.
+			else if (key < itr->key) // Deve ser inserido na subárvore esquerda.
 				itr = itr->left;
 			else // Deve ser inserido na subárvore direita.
 				itr = itr->right;
@@ -141,17 +161,19 @@ void RBTMultiset<T>::insert(const T& key) {
 
 		if (!already_in_tree) { // Se o elemento ainda não está na árvore.
 			RBTNode<T>* node = new RBTNode<T>(key, RED);
-			node.parent = parent;
+			node->parent = parent;
 
-			if (node.key < parent.key)
-				parent.left = node;
+			if (node->key < parent->key)
+				parent->left = node;
 			else
-				parent.right = node;
+				parent->right = node;
 
 			// Balanceia a árvore.
 			balance(node);
 		}
 	}
+
+	m_size++;
 }
 
 template <typename T>
@@ -166,6 +188,8 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {}
 template <typename T>
 void RBTMultiset<T>::clear() {}
 
+
+//---------------------------------------------- Operações entre multiconjuntos
 template <typename T>
 RBTMultiset<T> RBTMultiset<T>::_union(const RBTMultiset<T>& ms) {}
 
@@ -175,6 +199,69 @@ RBTMultiset<T> RBTMultiset<T>::_intersection(const RBTMultiset<T>& ms) {}
 template <typename T>
 RBTMultiset<T> RBTMultiset<T>::_difference(const RBTMultiset<T>& ms) {}
 
+
+//------------------------------------------------------------------- Depuração
+#ifdef RBT_DEBUG
+
+template <typename T>
+void RBTMultiset<T>::print() {
+	int height = 1;
+
+	std::queue<RBTNode<T>*> output;
+
+	output.push(m_root);
+
+	// Flag (nó com count == -1) para contar os níveis da árvore
+	RBTNode<T>* flag = new RBTNode<T>;
+	flag->count = -1ll;
+	output.push(flag);
+
+	while (!output.empty()) {
+		auto node = output.front();
+		output.pop();
+
+		if (!node) { // Filho nulo imprime espaços
+			for (int i = 0; i < 200 / pow(2, height); i++)
+				std::cout << " ";
+			std::cout << "         ";
+
+			if (height < log(m_size)) { // Simula árvore cheia
+				output.push(nullptr);
+				output.push(nullptr);
+			}
+		}
+		else if (node->count == -1ll) { // Se for flag a busca passou um nível
+			std::cout << std::endl;
+			output.push(flag);
+
+			height++;
+
+			// Duas flags seguidas indicam que a fila está vazia.
+			if (output.front() && output.front()->count == -1ll)
+				break;
+		}
+		else {
+			for (int i = 0; i < 100 / pow(2, height); i++)
+				std::cout << " ";
+
+			std::cout << "(" << std::setw(1) << node->key << ", "
+				<< std::setw(1) << node->count << ") ";
+
+			for (int i = 0; i < 100 / pow(2, height); i++)
+				std::cout << " ";
+			
+			output.push(node->left);
+			output.push(node->right);
+		}
+	}
+
+	delete flag;
+}
+
+#endif	// RBT_DEBUG
+
+
+//-------------------------------------------------- Operações de balanceamento
 template <typename T>
 void RBTMultiset<T>::balance(RBTNode<T>* node) {
 	while (node->parent && node->parent->color == RED) {
@@ -221,7 +308,7 @@ void RBTMultiset<T>::balance(RBTNode<T>* node) {
 			}
 		}
 
-		m_root.color = BLACK;
+		m_root->color = BLACK;
 	}
 }
 
