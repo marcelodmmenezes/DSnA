@@ -19,10 +19,7 @@
 
 
 #ifdef RBT_DEBUG
-#include <cmath>
-#include <iomanip>
 #include <iostream>
-#include <queue>
 #endif	// RBT_DEBUG
 
 
@@ -99,6 +96,7 @@ public:
 	//--------------------------------------------------------------- Depuração
 #ifdef RBT_DEBUG
 	void print();
+	void print(int height, RBTNode<T>* node);
 #endif	// RBT_DEBUG
 	//-------------------------------------------------------------------------
 
@@ -205,57 +203,34 @@ RBTMultiset<T> RBTMultiset<T>::_difference(const RBTMultiset<T>& ms) {}
 
 template <typename T>
 void RBTMultiset<T>::print() {
-	int height = 1;
+	std::cout << std::endl;
+	print(0, m_root);
+	std::cout << std::endl;
+}
 
-	std::queue<RBTNode<T>*> output;
+template <typename T>
+void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
+	if (node) {
+		print(height + 1, node->right);
 
-	output.push(m_root);
+		for (int i = 0; i < 10 * height; i++)
+			std::cout << " ";
 
-	// Flag (nó com count == -1) para contar os níveis da árvore
-	RBTNode<T>* flag = new RBTNode<T>;
-	flag->count = -1ll;
-	output.push(flag);
+		if (node->color == RED)
+			std::cout << "\033[31m" << "(" << node->key << ", "
+				<< node->count << ")" << std::endl;
+		else
+			std::cout << "\033[36m" << "(" << node->key << ", "
+				<< node->count << ")" << std::endl;
 
-	while (!output.empty()) {
-		auto node = output.front();
-		output.pop();
-
-		if (!node) { // Filho nulo imprime espaços
-			for (int i = 0; i < 200 / pow(2, height); i++)
-				std::cout << " ";
-			std::cout << "         ";
-
-			if (height < log(m_size)) { // Simula árvore cheia
-				output.push(nullptr);
-				output.push(nullptr);
-			}
-		}
-		else if (node->count == -1ll) { // Se for flag a busca passou um nível
-			std::cout << std::endl;
-			output.push(flag);
-
-			height++;
-
-			// Duas flags seguidas indicam que a fila está vazia.
-			if (output.front() && output.front()->count == -1ll)
-				break;
-		}
-		else {
-			for (int i = 0; i < 100 / pow(2, height); i++)
-				std::cout << " ";
-
-			std::cout << "(" << std::setw(1) << node->key << ", "
-				<< std::setw(1) << node->count << ") ";
-
-			for (int i = 0; i < 100 / pow(2, height); i++)
-				std::cout << " ";
-			
-			output.push(node->left);
-			output.push(node->right);
-		}
+		print(height + 1, node->left);
 	}
+	else {
+		for (int i = 0; i < 10 * height; i++)
+			std::cout << " ";
 
-	delete flag;
+		std::cout << "\033[39m(NULL)" << std::endl;
+	}
 }
 
 #endif	// RBT_DEBUG
