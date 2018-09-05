@@ -7,9 +7,6 @@
  *                                                                            *
  *****************************************************************************/
 
-//https://www.coders-hub.com/2015/07/red-black-tree-rb-tree-using-c.html#.W41ogXVKi2x
-//https://www.cs.usfca.edu/~galles/visualization/RedBlack.html
-
 
 #define RBT_DEBUG
 
@@ -213,23 +210,39 @@ void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
 	if (node) {
 		print(height + 1, node->right);
 
-		for (int i = 0; i < 10 * height; i++)
+		for (int i = 0; i < 9 * height; i++)
 			std::cout << " ";
+		std::cout << "|";
+		for (int i = 0; i < 6; i++)
+			std::cout << "-";
 
+// O modo de mudar as cores do terminal depende do sistema operacional
+#ifdef _MSC_VER
 		if (node->color == RED)
-			std::cout << "\033[31m" << "(" << node->key << ", "
+			std::cout << "(" << node->key << ", "
 				<< node->count << ")" << std::endl;
 		else
-			std::cout << "\033[36m" << "(" << node->key << ", "
+			std::cout << "(" << node->key << ", "
 				<< node->count << ")" << std::endl;
+#elif defined(__unix__)
+		if (node->color == RED)
+			std::cout << "\033[31m(" << node->key << ", "
+				<< node->count << ")\033[39m" << std::endl;
+		else
+			std::cout << "(" << node->key << ", "
+				<< node->count << ")" << std::endl;
+#endif	// Operating System stuff
 
 		print(height + 1, node->left);
 	}
 	else {
-		for (int i = 0; i < 10 * height; i++)
+		for (int i = 0; i < 9 * height; i++)
 			std::cout << " ";
+		std::cout << "|";
+		for (int i = 0; i < 6; i++)
+			std::cout << "-";
 
-		std::cout << "\033[39m(NULL)" << std::endl;
+		std::cout << "()" << std::endl;
 	}
 }
 
@@ -243,48 +256,42 @@ void RBTMultiset<T>::balance(RBTNode<T>* node) {
 		RBTNode<T>* grand_parent = node->parent->parent;
 
 		if (grand_parent->left == node->parent) {
-			if (grand_parent->right) {
-				if (grand_parent->right->color = RED) {
-					node->parent->color = BLACK;
-					grand_parent->right->color = BLACK;
-					grand_parent->color = RED;
-					node = grand_parent;
-				}
+			if (grand_parent->right && grand_parent->right->color == RED) {
+				node->parent->color = BLACK;
+				grand_parent->right->color = BLACK;
+				grand_parent->color = RED;
+				node = grand_parent;
+			}
+			else if (node->parent->right && node->parent->right == node) {
+				node = node->parent;
+				leftRotate(node);
 			}
 			else {
-				if (node->parent->right == node) {
-					node = node->parent;
-					leftRotate(node);
-				}
-
 				node->parent->color = BLACK;
 				grand_parent->color = RED;
 				rightRotate(grand_parent);
 			}
 		}
 		else {
-			if (grand_parent->left) {
-				if (grand_parent->left->color = RED) {
-					node->parent->color = BLACK;
-					grand_parent->left->color = BLACK;
-					grand_parent->color = RED;
-					node = grand_parent;
-				}
+			if (grand_parent->left && grand_parent->left->color == RED) {
+				node->parent->color = BLACK;
+				grand_parent->left->color = BLACK;
+				grand_parent->color = RED;
+				node = grand_parent;
+			}
+			else if (node->parent->left && node->parent->left == node) {
+				node = node->parent;
+				rightRotate(node);
 			}
 			else {
-				if (node->parent->left == node) {
-					node = node->parent;
-					rightRotate(node);
-				}
-
 				node->parent->color = BLACK;
 				grand_parent->color = RED;
 				leftRotate(grand_parent);
 			}
 		}
-
-		m_root->color = BLACK;
 	}
+
+	m_root->color = BLACK;
 }
 
 template <typename T>
@@ -301,16 +308,14 @@ void RBTMultiset<T>::leftRotate(RBTNode<T>* node) {
 	else
 		node->right = nullptr;
 
+	aux_node->parent = node->parent;
+
 	if (!node->parent)
 		m_root = aux_node;
-	else {
-		aux_node->parent = node->parent;
-
-		if (node == node->parent->left)
-			node->parent->left = aux_node;
-		else
-			node->parent->right = aux_node;
-	}
+	else if (node == node->parent->left)
+		node->parent->left = aux_node;
+	else
+		node->parent->right = aux_node;
 
 	aux_node->left = node;
 	node->parent = aux_node;
@@ -330,16 +335,14 @@ void RBTMultiset<T>::rightRotate(RBTNode<T>* node) {
 	else
 		node->left = nullptr;
 
+	aux_node->parent = node->parent;
+
 	if (!node->parent)
 		m_root = aux_node;
-	else {
-		aux_node->parent = node->parent;
-
-		if (node == node->parent->left)
-			node->parent->left = aux_node;
-		else
-			node->parent->right = aux_node;
-	}
+	else if (node == node->parent->left)
+		node->parent->left = aux_node;
+	else
+		node->parent->right = aux_node;
 
 	aux_node->right = node;
 	node->parent = aux_node;
