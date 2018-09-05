@@ -8,6 +8,7 @@
  *****************************************************************************/
 
 
+// Flag para habilitar as funções de impressão da árvore no terminal
 #define RBT_DEBUG
 
 
@@ -99,7 +100,8 @@ public:
 
 private:
 	//---------------------------------------------- Operações de balanceamento
-	void balance(RBTNode<T>* node);
+	void balanceInsertion(RBTNode<T>* node);
+	void replaceNode(RBTNode<T>* old_node, RBTNode<T>* new_node);
 	void leftRotate(RBTNode<T>* node);
 	void rightRotate(RBTNode<T>* node);
 	//-------------------------------------------------------------------------
@@ -164,7 +166,7 @@ void RBTMultiset<T>::insert(const T& key) {
 				parent->right = node;
 
 			// Balanceia a árvore.
-			balance(node);
+			balanceInsertion(node);
 		}
 	}
 
@@ -251,7 +253,7 @@ void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
 
 //-------------------------------------------------- Operações de balanceamento
 template <typename T>
-void RBTMultiset<T>::balance(RBTNode<T>* node) {
+void RBTMultiset<T>::balanceInsertion(RBTNode<T>* node) {
 	while (node->parent && node->parent->color == RED) {
 		RBTNode<T>* grand_parent = node->parent->parent;
 
@@ -292,6 +294,18 @@ void RBTMultiset<T>::balance(RBTNode<T>* node) {
 	}
 
 	m_root->color = BLACK;
+}
+
+template <typename T>
+void RBTMultiset<T>::replaceNode(RBTNode<T>* old_node, RBTNode<T>* new_node) {
+	if (!old_node.parent)
+		m_root = new_node;
+	else if (old_node.parent.left && old_node.parent.left == old_node)
+		old_node.parent.left = new_node;
+	else
+		old_node.parent.right = new_node;
+
+	new_node.parent = old_node.parent;
 }
 
 template <typename T>
