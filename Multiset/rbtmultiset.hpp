@@ -8,7 +8,7 @@
  *****************************************************************************/
 
 
-// Flag para habilitar as funções de impressão da árvore no terminal
+// Flag para habilitar as funções de depuração
 #define RBT_DEBUG
 
 
@@ -44,7 +44,7 @@ struct RBTNode {
 };
 
 
-template<typename T>
+template <typename T>
 class RBTMultiset {
 public:
 	RBTMultiset();
@@ -62,11 +62,11 @@ public:
 	// Insere um elemento.
 	void insert(const T& key);
 	
-	// Verifica se o elemento pertence ao multiconjunto.
+	// Verifica se o elemento está contido no multiconjunto.
 	bool contains(const T& key);
 
 	// Retorna o número de ocorrências de um elemento.
-	int frequency(const T& key);
+	long long frequency(const T& key);
 
 	// Remove um dado elemento do multiconjunto.
 	// Caso o segundo parâmetro seja passado com o valor "true",
@@ -99,9 +99,17 @@ public:
 	//-------------------------------------------------------------------------
 
 private:
+	//---------------------------------------------------- Operações auxiliares
+	void replaceNode(bool delete_old_node,
+		RBTNode<T>* old_node, RBTNode<T>* new_node);
+	void clear(RBTNode<T>* node);
+	RBTNode<T>* minimum(RBTNode<T>* node);
+	RBTNode<T>* maximum(RBTNode<T>* node);
+	//-------------------------------------------------------------------------
+
 	//---------------------------------------------- Operações de balanceamento
 	void balanceInsertion(RBTNode<T>* node);
-	void replaceNode(RBTNode<T>* old_node, RBTNode<T>* new_node);
+	void balanceRemoval(RBTNode<T>* node);
 	void leftRotate(RBTNode<T>* node);
 	void rightRotate(RBTNode<T>* node);
 	//-------------------------------------------------------------------------
@@ -147,7 +155,7 @@ void RBTMultiset<T>::insert(const T& key) {
 			parent = itr;
 
 			if (key == itr->key) { // Elemento já está na árvore.
-				itr->key++;
+				itr->count++;
 				already_in_tree = true;
 			}
 			else if (key < itr->key) // Deve ser inserido na subárvore esquerda.
@@ -174,19 +182,118 @@ void RBTMultiset<T>::insert(const T& key) {
 }
 
 template <typename T>
-bool RBTMultiset<T>::contains(const T& key) {}
+bool RBTMultiset<T>::contains(const T& key) {
+	bool found = false;
+	RBTNode<T>* itr = m_root;
 
-template <typename T>
-int RBTMultiset<T>::frequency(const T& key) {}
+	while (itr && !found) {
+		if (key == itr->key)
+			found = true;
+		else if (key < itr->key)
+			itr = itr->left;
+		else
+			itr = itr->right;
+	}
 
-template <typename T>
-bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
-
+	return found;
 }
 
 template <typename T>
-void RBTMultiset<T>::clear() {}
+long long RBTMultiset<T>::frequency(const T& key) {
+	long long freq = 0ll;
+	RBTNode<T>* itr = m_root;
 
+	while (itr && freq == 0ll) {
+		if (key == itr->key)
+			freq = itr->count;
+		else if (key < itr->key)
+			itr = itr->left;
+		else
+			itr = itr->right;
+	}
+
+	return freq;
+}
+
+template <typename T>
+bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
+	short found = 0;
+	RBTNode<T>* itr = m_root;
+
+	while (itr && found == 0) {
+		if (key == itr->key) {
+			if (!all_equal && itr->count > 1) {
+				itr->count--;
+				found = 1; // Nó encontrado, mas não é necessário remover
+			}
+			else
+				found = 2; // Nó encontrado e deve ser removido
+		}
+		else if (key < itr->key)
+			itr = itr->left;
+		else
+			itr = itr->right;
+	}
+
+	if (found == 2) {
+		RBTNode<T>* aux_node_1;
+		RBTNode<T>* aux_node_2;
+		RBTNode<T>* aux_node_1_parent = itr->parent;
+
+		Color original_color = itr->color;
+
+ 		if (!itr->left) { // Remoção simples
+			aux_node_1 = itr->right;
+			replaceNode(true, itr, itr->right);
+		}
+		else if (!itr->right) { // Remoção simples
+			aux_node_1 = itr->left;
+			replaceNode(true, itr, itr->left);
+		}
+		else { // Substitui o nó por seu sucessor
+			aux_node_2 = minimum(itr->right);
+			original_color = aux_node_2->color;
+			aux_node_1 = aux_node_2->right;
+			aux_node_1_parent = aux_node_2;
+
+			// Se o sucessor não for filho direto do nó a ser removido,
+			// o filho do sucessor deve ser colocado em seu lugar e o
+			// sucessor se torna o pai da subárvore direita do nó a ser
+			// removido
+			if (aux_node_2->parent != itr) {
+				replaceNode(false, aux_node_2, aux_node_2->right);
+				aux_node_2->right = itr->right;
+				aux_node_2->right->parent = aux_node_2;
+			}
+
+			// Subárvore esquerda do nó a ser removido se torna subárvore
+			// esquerda de seu sucessor
+			aux_node_2->left = itr->left;
+			aux_node_2->left->parent = aux_node_2;
+			aux_node_2->color = itr->color;
+
+			// Sucessor ocupa o lugar do nó a ser removido
+			replaceNode(true, itr, aux_node_2);
+		}
+
+		if (original_color == BLACK) {
+print();
+			if (!aux_node_1)
+				balanceRemoval(aux_node_1_parent);
+			else
+				balanceRemoval(aux_node_1);
+		}
+	}
+
+	return found; // true se o nó foi encontrado, false caso contrário
+}
+
+template <typename T>
+void RBTMultiset<T>::clear() {
+	clear(m_root);
+	m_root = nullptr;
+	m_size = 0u;
+}
 
 //---------------------------------------------- Operações entre multiconjuntos
 template <typename T>
@@ -197,7 +304,6 @@ RBTMultiset<T> RBTMultiset<T>::_intersection(const RBTMultiset<T>& ms) {}
 
 template <typename T>
 RBTMultiset<T> RBTMultiset<T>::_difference(const RBTMultiset<T>& ms) {}
-
 
 //------------------------------------------------------------------- Depuração
 #ifdef RBT_DEBUG
@@ -252,6 +358,54 @@ void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
 
 #endif	// RBT_DEBUG
 
+//-------------------------------------------------------- Operações auxiliares
+template <typename T>
+void RBTMultiset<T>::replaceNode(bool delete_old_node,
+	RBTNode<T>* old_node, RBTNode<T>* new_node) {
+	if (!old_node->parent)
+		m_root = new_node;
+	else if (old_node->parent->left && old_node->parent->left == old_node)
+		old_node->parent->left = new_node;
+	else
+		old_node->parent->right = new_node;
+
+	if (new_node)
+		new_node->parent = old_node->parent;
+
+	if (delete_old_node)
+		delete old_node;
+}
+
+template <typename T>
+void RBTMultiset<T>::clear(RBTNode<T>* node) {
+	if (node->left)
+		clear(node->left);
+
+	if (node->right)
+		clear(node->right);
+
+	delete node;
+}
+
+template <typename T>
+RBTNode<T>* RBTMultiset<T>::minimum(RBTNode<T>* node) {
+	RBTNode<T>* itr = node;
+
+	while (itr->left)
+		itr = itr->left;
+
+	return itr;
+}
+
+template <typename T>
+RBTNode<T>* RBTMultiset<T>::maximum(RBTNode<T>* node) {
+	RBTNode<T>* itr = node;
+
+	while (itr->right)
+		itr = itr->right;
+
+	return itr;
+}
 
 //-------------------------------------------------- Operações de balanceamento
 template <typename T>
@@ -299,15 +453,85 @@ void RBTMultiset<T>::balanceInsertion(RBTNode<T>* node) {
 }
 
 template <typename T>
-void RBTMultiset<T>::replaceNode(RBTNode<T>* old_node, RBTNode<T>* new_node) {
-	if (!old_node.parent)
-		m_root = new_node;
-	else if (old_node.parent.left && old_node.parent.left == old_node)
-		old_node.parent.left = new_node;
-	else
-		old_node.parent.right = new_node;
+void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
+	RBTNode<T>* aux_node;
+std::cout << "1\n";
+	while (node->parent && node->color == BLACK) {
+		if (node == node->parent->left) {
+			aux_node = node->parent->right;
+std::cout << "2\n";
 
-	new_node.parent = old_node.parent;
+			if (aux_node && aux_node->color == RED) {
+std::cout << "3\n";
+				aux_node->color = BLACK;
+				node->parent->color = RED;
+				leftRotate(node->parent);
+				aux_node = node->parent->right;
+			}
+
+			if ((!aux_node->left || aux_node->left->color == BLACK) &&
+				(!aux_node->right || aux_node->right->color == BLACK)) {
+std::cout << "4\n";
+				aux_node->color = RED;
+				node = node->parent;
+			}
+			else {
+std::cout << "5\n";
+				if (!aux_node->right || aux_node->right->color == BLACK) {
+std::cout << "6\n";
+					aux_node->left->color = BLACK;
+					aux_node->color = RED;
+					rightRotate(aux_node);
+					aux_node = node->parent->right;
+				}
+
+				aux_node->color = node->parent->color;
+				node->parent->color = BLACK;
+				aux_node->right->color = BLACK;
+				leftRotate(node->parent);
+
+				node = m_root;
+			}
+		}
+		else {
+std::cout << "7\n";
+			aux_node = node->parent->left;
+
+			if (aux_node && aux_node->color == RED) {
+std::cout << "8\n";
+				aux_node->color = BLACK;
+				node->parent->color = RED;
+				leftRotate(node->parent);
+				aux_node = node->parent->left;
+			}
+
+			if ((!aux_node || aux_node->right->color == BLACK) &&
+				(!aux_node || aux_node->left->color == BLACK)) {
+std::cout << "9\n";
+				aux_node->color = RED;
+				node = node->parent;
+			}
+			else {
+std::cout << "10\n";
+				if (!aux_node->left || aux_node->left->color == BLACK) {
+std::cout << "11\n";
+					aux_node->right->color = BLACK;
+					aux_node->color = RED;
+					rightRotate(aux_node);
+					aux_node = node->parent->left;
+				}
+
+				aux_node->color = node->parent->color;
+				node->parent->color = BLACK;
+				aux_node->left->color = BLACK;
+				leftRotate(node->parent);
+				
+				node = m_root;
+			}
+		}
+	}
+
+	node->color = BLACK;
 }
 
 template <typename T>
