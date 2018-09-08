@@ -180,7 +180,9 @@ template <typename T>
 int RBTMultiset<T>::frequency(const T& key) {}
 
 template <typename T>
-bool RBTMultiset<T>::remove(const T& key, bool all_equal) {}
+bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
+
+}
 
 template <typename T>
 void RBTMultiset<T>::clear() {}
@@ -218,18 +220,18 @@ void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
 		for (int i = 0; i < 6; i++)
 			std::cout << "-";
 
-// O modo de mudar as cores do terminal depende do sistema operacional
-#ifdef _MSC_VER
-		if (node->color == RED)
-			std::cout << "(" << node->key << ", "
-				<< node->count << ")" << std::endl;
-		else
-			std::cout << "(" << node->key << ", "
-				<< node->count << ")" << std::endl;
-#elif defined(__unix__)
+// Nós vermelhos são coloridos no terminal do linux
+#ifdef __unix__
 		if (node->color == RED)
 			std::cout << "\033[31m(" << node->key << ", "
 				<< node->count << ")\033[39m" << std::endl;
+		else
+			std::cout << "(" << node->key << ", "
+				<< node->count << ")" << std::endl;
+#else
+		if (node->color == RED)
+			std::cout << "(" << node->key << ", "
+				<< node->count << ")" << std::endl;
 		else
 			std::cout << "(" << node->key << ", "
 				<< node->count << ")" << std::endl;
