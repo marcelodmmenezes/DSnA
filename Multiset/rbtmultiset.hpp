@@ -238,7 +238,7 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 	if (found == 2) {
 		RBTNode<T>* aux_node_1;
 		RBTNode<T>* aux_node_2;
-		RBTNode<T>* aux_node_1_parent = itr->parent;
+		RBTNode<T>* aux_node_1_parent = itr;
 
 		Color original_color = itr->color;
 
@@ -264,6 +264,7 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 				replaceNode(false, aux_node_2, aux_node_2->right);
 				aux_node_2->right = itr->right;
 				aux_node_2->right->parent = aux_node_2;
+				aux_node_1_parent = aux_node_2->parent;
 			}
 
 			// Subárvore esquerda do nó a ser removido se torna subárvore
@@ -455,77 +456,81 @@ void RBTMultiset<T>::balanceInsertion(RBTNode<T>* node) {
 template <typename T>
 void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
 	RBTNode<T>* aux_node;
-std::cout << "1\n";
+
 	while (node->parent && node->color == BLACK) {
 		if (node == node->parent->left) {
 			aux_node = node->parent->right;
-std::cout << "2\n";
 
 			if (aux_node && aux_node->color == RED) {
-std::cout << "3\n";
 				aux_node->color = BLACK;
 				node->parent->color = RED;
 				leftRotate(node->parent);
 				aux_node = node->parent->right;
+std::cout << "0";
+print();
 			}
 
 			if ((!aux_node->left || aux_node->left->color == BLACK) &&
 				(!aux_node->right || aux_node->right->color == BLACK)) {
-std::cout << "4\n";
 				aux_node->color = RED;
 				node = node->parent;
+std::cout << "1";
+print();
 			}
 			else {
-std::cout << "5\n";
 				if (!aux_node->right || aux_node->right->color == BLACK) {
-std::cout << "6\n";
 					aux_node->left->color = BLACK;
 					aux_node->color = RED;
 					rightRotate(aux_node);
 					aux_node = node->parent->right;
+std::cout << "2";
+print();
 				}
 
 				aux_node->color = node->parent->color;
 				node->parent->color = BLACK;
 				aux_node->right->color = BLACK;
 				leftRotate(node->parent);
-
+std::cout << "3";
+print();
 				node = m_root;
 			}
 		}
 		else {
-std::cout << "7\n";
 			aux_node = node->parent->left;
 
 			if (aux_node && aux_node->color == RED) {
-std::cout << "8\n";
 				aux_node->color = BLACK;
 				node->parent->color = RED;
-				leftRotate(node->parent);
+				rightRotate(node->parent);
 				aux_node = node->parent->left;
+std::cout << "4";
+print();
 			}
 
-			if ((!aux_node || aux_node->right->color == BLACK) &&
-				(!aux_node || aux_node->left->color == BLACK)) {
-std::cout << "9\n";
+			if ((!aux_node->right || aux_node->right->color == BLACK) &&
+				(!aux_node->left || aux_node->left->color == BLACK)) {
 				aux_node->color = RED;
 				node = node->parent;
+std::cout << "5";
+print();
 			}
 			else {
-std::cout << "10\n";
 				if (!aux_node->left || aux_node->left->color == BLACK) {
-std::cout << "11\n";
 					aux_node->right->color = BLACK;
 					aux_node->color = RED;
-					rightRotate(aux_node);
+					leftRotate(aux_node);
 					aux_node = node->parent->left;
+std::cout << "6";
+print();
 				}
 
 				aux_node->color = node->parent->color;
 				node->parent->color = BLACK;
 				aux_node->left->color = BLACK;
-				leftRotate(node->parent);
-				
+				rightRotate(node->parent);
+std::cout << "7";
+print();		
 				node = m_root;
 			}
 		}
