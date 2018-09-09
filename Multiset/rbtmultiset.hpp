@@ -17,8 +17,11 @@
 
 
 #ifdef RBT_DEBUG
-#include <iostream>
-#endif	// RBT_DEBUG
+	#include <iostream>
+	#ifdef _WIN32
+		#include <windows.h>
+	#endif
+#endif
 
 
 //***** DEFINIÇÕES *****//
@@ -336,21 +339,36 @@ void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
 		for (int i = 0; i < 6; i++)
 			std::cout << "-";
 
-// Nós vermelhos são coloridos no terminal do linux
+// Nós são coloridos de acordo com o sistema operacional
 #ifdef __unix__
+
 		if (node->color == RED)
 			std::cout << "\033[31m(" << node->key << ", "
 				<< node->count << ")\033[39m" << std::endl;
 		else
 			std::cout << "(" << node->key << ", "
 				<< node->count << ")" << std::endl;
-#else
-		if (node->color == RED)
+
+#elif defined _WIN32
+
+		auto console = GetStdHandle(STD_OUTPUT_HANDLE);
+	    auto *info = new CONSOLE_SCREEN_BUFFER_INFO();
+	    GetConsoleScreenBufferInfo(console, info);
+	    auto default_color = info->wAttributes;
+
+		if (node->color == RED) {
+			SetConsoleTextAttribute(console, 4);
 			std::cout << "(" << node->key << ", "
 				<< node->count << ")" << std::endl;
-		else
+		}
+		else {
+			SetConsoleTextAttribute(console, 2);
 			std::cout << "(" << node->key << ", "
 				<< node->count << ")" << std::endl;
+		}
+
+		SetConsoleTextAttribute(console, default_color);
+
 #endif	// Operating System stuff
 
 		print(height + 1, node->left);
