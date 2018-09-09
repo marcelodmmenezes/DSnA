@@ -507,16 +507,12 @@ void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
 				node->parent->color = RED;
 				leftRotate(node->parent);
 				aux_node = node->parent->right;
-std::cout << "0";
-print();
 			}
 
 			if ((!aux_node->left || aux_node->left->color == BLACK) &&
 				(!aux_node->right || aux_node->right->color == BLACK)) {
 				aux_node->color = RED;
 				node = node->parent;
-std::cout << "1";
-print();
 			}
 			else {
 				if (!aux_node->right || aux_node->right->color == BLACK) {
@@ -524,16 +520,12 @@ print();
 					aux_node->color = RED;
 					rightRotate(aux_node);
 					aux_node = node->parent->right;
-std::cout << "2";
-print();
 				}
 
 				aux_node->color = node->parent->color;
 				node->parent->color = BLACK;
 				aux_node->right->color = BLACK;
 				leftRotate(node->parent);
-std::cout << "3";
-print();
 				node = m_root;
 			}
 		}
@@ -545,16 +537,12 @@ print();
 				node->parent->color = RED;
 				rightRotate(node->parent);
 				aux_node = node->parent->left;
-std::cout << "4";
-print();
 			}
 
 			if ((!aux_node->right || aux_node->right->color == BLACK) &&
 				(!aux_node->left || aux_node->left->color == BLACK)) {
 				aux_node->color = RED;
 				node = node->parent;
-std::cout << "5";
-print();
 			}
 			else {
 				if (!aux_node->left || aux_node->left->color == BLACK) {
@@ -562,16 +550,12 @@ print();
 					aux_node->color = RED;
 					leftRotate(aux_node);
 					aux_node = node->parent->left;
-std::cout << "6";
-print();
 				}
 
 				aux_node->color = node->parent->color;
 				node->parent->color = BLACK;
 				aux_node->left->color = BLACK;
 				rightRotate(node->parent);
-std::cout << "7";
-print();		
 				node = m_root;
 			}
 		}
