@@ -112,7 +112,7 @@ private:
 
 	//---------------------------------------------- Operações de balanceamento
 	void balanceInsertion(RBTNode<T>* node);
-	void balanceRemoval(RBTNode<T>* node, int balance_leaf);
+	void balanceRemoval(RBTNode<T>* node);
 	void leftRotate(RBTNode<T>* node);
 	void rightRotate(RBTNode<T>* node);
 	//-------------------------------------------------------------------------
@@ -239,62 +239,76 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 	}
 
 	if (found == 2) {
-		RBTNode<T>* aux_node_1;
-		RBTNode<T>* aux_node_2;
-		RBTNode<T>* aux_node_1_parent = itr;
-		int balance_leaf = 0;
+		RBTNode<T>* placeholder;
+		RBTNode<T>* replacement;
 
 		Color original_color = itr->color;
 
  		if (!itr->left) { // Remoção simples
-			aux_node_1 = itr->right;
+			placeholder = itr->right;
 			replaceNode(true, itr, itr->right);
 
-			if (!aux_node_1)
-				balance_leaf = 2;
+			if (!placeholder) { // Substituto do nó nulo para balanceamento
+				placeholder = new RBTNode<T>;
+				placeholder->color = BLACK;
+				placeholder->parent = itr;
+				itr->right = placeholder;
+			}
 		}
 		else if (!itr->right) { // Remoção simples
-			aux_node_1 = itr->left;
+			placeholder = itr->left;
 			replaceNode(true, itr, itr->left);
 
-			if (!aux_node_1)
-				balance_leaf = 1;
+			if (!placeholder) { // Substituto do nó nulo para balanceamento
+				placeholder = new RBTNode<T>;
+				placeholder->color = BLACK;
+				placeholder->parent = itr;
+				itr->left = placeholder;
+			}
 		}
 		else { // Substitui o nó por seu sucessor
-			aux_node_2 = minimum(itr->right);
-			original_color = aux_node_2->color;
-			aux_node_1 = aux_node_2->right;
-			aux_node_1_parent = aux_node_2;
+			replacement = minimum(itr->right);
+			original_color = replacement->color;
+			placeholder = replacement->right;
 
-			if (!aux_node_1)
-				balance_leaf = 2;
+			if (!placeholder) { // Substituto do nó nulo para balanceamento
+				placeholder = new RBTNode<T>;
+				placeholder->color = BLACK;
+				placeholder->parent = replacement;
+				replacement->right = placeholder;
+			}
 
 			// Se o sucessor não for filho direto do nó a ser removido,
 			// o filho do sucessor deve ser colocado em seu lugar e o
 			// sucessor se torna o pai da subárvore direita do nó a ser
 			// removido
-			if (aux_node_2->parent != itr) {
-				replaceNode(false, aux_node_2, aux_node_2->right);
-				aux_node_2->right = itr->right;
-				aux_node_2->right->parent = aux_node_2;
-				aux_node_1_parent = aux_node_2->parent;
+			if (replacement->parent != itr) {
+				replaceNode(false, replacement, replacement->right);
+				replacement->right = itr->right;
+				replacement->right->parent = replacement;
 			}
 
 			// Subárvore esquerda do nó a ser removido se torna subárvore
 			// esquerda de seu sucessor
-			aux_node_2->left = itr->left;
-			aux_node_2->left->parent = aux_node_2;
-			aux_node_2->color = itr->color;
+			replacement->left = itr->left;
+			replacement->left->parent = replacement;
+			replacement->color = itr->color;
 
 			// Sucessor ocupa o lugar do nó a ser removido
-			replaceNode(true, itr, aux_node_2);
+			replaceNode(true, itr, replacement);
 		}
 
-		if (original_color == BLACK) {
-			if (!aux_node_1)
-				aux_node_1 = aux_node_1_parent;
+		if (original_color == BLACK)
+			balanceRemoval(placeholder);
 
-			balanceRemoval(aux_node_1, balance_leaf);
+		// Limpando a memória auxiliar
+		if (placeholder) {
+			if (placeholder->parent->left == placeholder)
+				placeholder->parent->left = nullptr;
+			else
+				placeholder->parent->right = nullptr;
+
+			delete placeholder;
 		}
 	}
 
@@ -481,63 +495,8 @@ void RBTMultiset<T>::balanceInsertion(RBTNode<T>* node) {
 }
 
 template <typename T>
-void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node, int balance_leaf) {
+void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
 	RBTNode<T>* aux_node;
-
-	if (balance_leaf == 1 && node->right) {
-		aux_node = node->right;
-
-		if (aux_node && aux_node->color == RED) {
-			aux_node->color = BLACK;
-			node->color = RED;
-			leftRotate(node);
-			aux_node = node->right;
-		}
-
-		if ((!aux_node->left || aux_node->left->color == BLACK) &&
-			(!aux_node->right || aux_node->right->color == BLACK))
-			aux_node->color = RED;
-		else {
-			if (!aux_node->right || aux_node->right->color == BLACK) {
-				aux_node->left->color = BLACK;
-				aux_node->color = RED;
-				rightRotate(aux_node);
-				aux_node = node->right;
-			}
-
-			aux_node->color = node->color;
-			node->color = BLACK;
-			aux_node->right->color = BLACK;
-			leftRotate(node);
-		}
-	}
-	else if (balance_leaf == 2 && node->left) {
-		aux_node = node->left;
-
-		if (aux_node && aux_node->color == RED) {
-			aux_node->color = BLACK;
-			node->color = RED;
-			rightRotate(node);
-			aux_node = node->left;
-		}
-
-		if ((!aux_node->right || aux_node->right->color == BLACK) &&
-			(!aux_node->left || aux_node->left->color == BLACK))
-			aux_node->color = RED;
-		else {
-			if (!aux_node->left || aux_node->left->color == BLACK) {
-				aux_node->right->color = BLACK;
-				aux_node->color = RED;
-				leftRotate(aux_node);
-				aux_node = node->left;
-			}
-
-			aux_node->color = node->color;
-			node->color = BLACK;
-			aux_node->left->color = BLACK;
-			rightRotate(node);
-		}
-	}
 
 	while (node->parent && node->color == BLACK) {
 		if (node == node->parent->left) {

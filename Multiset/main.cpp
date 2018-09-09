@@ -11,6 +11,8 @@ int main() {
 			ms.insert(n);
 		else if (c == 'd')
 			ms.remove(n);
+		else if (c == 'q')
+			break;
 		else
 			ms.clear();
 
