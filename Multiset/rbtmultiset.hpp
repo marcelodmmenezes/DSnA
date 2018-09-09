@@ -241,42 +241,51 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 	if (found == 2) {
 		RBTNode<T>* placeholder;
 		RBTNode<T>* replacement;
+		bool del_placeholder = false;
 
 		Color original_color = itr->color;
 
  		if (!itr->left) { // Remoção simples
+			// Se ambos os filhos são nulos
+			if (!itr->right && itr->parent) {
+				// Substituto do nó nulo para balanceamento
+				itr->right = new RBTNode<T>;
+				itr->right->color = BLACK;
+				del_placeholder = true;
+			}
+			//else
+			//	original_color = RED; // Evita o balanceamento
+
 			placeholder = itr->right;
 			replaceNode(true, itr, itr->right);
-
-			if (!placeholder) { // Substituto do nó nulo para balanceamento
-				placeholder = new RBTNode<T>;
-				placeholder->color = BLACK;
-				placeholder->parent = itr;
-				itr->right = placeholder;
-			}
 		}
 		else if (!itr->right) { // Remoção simples
+			// Se ambos os filhos são nulos
+			if (!itr->left && itr->parent) {
+				// Substituto do nó nulo para balanceamento
+				itr->left = new RBTNode<T>;
+				itr->left->color = BLACK;
+				del_placeholder = true;
+			}
+			//else
+			//	original_color = RED; // Evita o balanceamento
+
 			placeholder = itr->left;
 			replaceNode(true, itr, itr->left);
-
-			if (!placeholder) { // Substituto do nó nulo para balanceamento
-				placeholder = new RBTNode<T>;
-				placeholder->color = BLACK;
-				placeholder->parent = itr;
-				itr->left = placeholder;
-			}
 		}
 		else { // Substitui o nó por seu sucessor
 			replacement = minimum(itr->right);
 			original_color = replacement->color;
-			placeholder = replacement->right;
-
-			if (!placeholder) { // Substituto do nó nulo para balanceamento
-				placeholder = new RBTNode<T>;
-				placeholder->color = BLACK;
-				placeholder->parent = replacement;
-				replacement->right = placeholder;
+			
+			// Substituto do nó nulo para balanceamento
+			if (!replacement->right) {
+				replacement->right = new RBTNode<T>;
+				replacement->right->color = BLACK;
+				replacement->right->parent = replacement;
+				del_placeholder = true;
 			}
+
+			placeholder = replacement->right;
 
 			// Se o sucessor não for filho direto do nó a ser removido,
 			// o filho do sucessor deve ser colocado em seu lugar e o
@@ -302,11 +311,13 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 			balanceRemoval(placeholder);
 
 		// Limpando a memória auxiliar
-		if (placeholder) {
-			if (placeholder->parent->left == placeholder)
-				placeholder->parent->left = nullptr;
-			else
-				placeholder->parent->right = nullptr;
+		if (del_placeholder) {
+			if (placeholder->parent) {
+				if (placeholder->parent->left == placeholder)
+					placeholder->parent->left = nullptr;
+				else
+					placeholder->parent->right = nullptr;
+			}
 
 			delete placeholder;
 		}
@@ -498,7 +509,7 @@ template <typename T>
 void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
 	RBTNode<T>* aux_node;
 
-	while (node->parent && node->color == BLACK) {
+	while (node && node->parent && node->color == BLACK) {
 		if (node == node->parent->left) {
 			aux_node = node->parent->right;
 
@@ -509,12 +520,13 @@ void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
 				aux_node = node->parent->right;
 			}
 
-			if ((!aux_node->left || aux_node->left->color == BLACK) &&
+			if (aux_node &&
+				(!aux_node->left || aux_node->left->color == BLACK) &&
 				(!aux_node->right || aux_node->right->color == BLACK)) {
 				aux_node->color = RED;
 				node = node->parent;
 			}
-			else {
+			else if (aux_node) {
 				if (!aux_node->right || aux_node->right->color == BLACK) {
 					aux_node->left->color = BLACK;
 					aux_node->color = RED;
@@ -539,12 +551,13 @@ void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
 				aux_node = node->parent->left;
 			}
 
-			if ((!aux_node->right || aux_node->right->color == BLACK) &&
+			if (aux_node &&
+				(!aux_node->right || aux_node->right->color == BLACK) &&
 				(!aux_node->left || aux_node->left->color == BLACK)) {
 				aux_node->color = RED;
 				node = node->parent;
 			}
-			else {
+			else if (aux_node) {
 				if (!aux_node->left || aux_node->left->color == BLACK) {
 					aux_node->right->color = BLACK;
 					aux_node->color = RED;
@@ -561,7 +574,8 @@ void RBTMultiset<T>::balanceRemoval(RBTNode<T>* node) {
 		}
 	}
 
-	node->color = BLACK;
+	if (node)
+		node->color = BLACK;
 }
 
 template <typename T>
