@@ -73,6 +73,9 @@ public:
 
 	// Remove todos os elementos do multiconjunto.
 	void clear();
+
+	// Mesmo que o clear, mas libera a memória, com exceção de uma posição
+	void reset();
 	//-------------------------------------------------------------------------	
 
 	//------------------------------------------ Operações entre multiconjuntos
@@ -112,24 +115,21 @@ private:
 
 template <typename T>
 DAMultiset<T>::DAMultiset() : m_size(0ll), m_occupied(0ll), m_capacity(1ll) {
-	//m_array = (DANode<T>*)malloc(1 * sizeof(DANode<T>));
 	m_array = new DANode<T>;
 }
 
 template <typename T>
 DAMultiset<T>::DAMultiset(long long capacity) :
 	m_size(0ll), m_occupied(0ll), m_capacity(capacity) {
-	if (m_capacity <= 0)
+	if (m_capacity <= 0ll)
 		m_capacity = 1ll;
 
-	//m_array = (DANode<T>*)malloc(m_capacity * sizeof(DANode<T>));
 	m_array = new DANode<T>[m_capacity];
 }
 
 template <typename T>
 DAMultiset<T>::~DAMultiset() {
 	clear();
-	//free(m_array);
 	delete[] m_array;
 }
 
@@ -160,16 +160,15 @@ bool DAMultiset<T>::insert(const T& key, long long qnt) {
 
 	// Se o elemento já estiver no array basta incrementar seu contador
 	if (pos >= 0ll) {
-std::cout << "A" << std::endl;
 		m_array[pos].count += qnt;
 		m_size += qnt;
 		return true;
 	}
 
+	// Se a capacidade foi preenchida aloca um novo vetor
 	if (m_occupied == m_capacity) {
-std::cout << "B" << std::endl;
 		m_capacity *= 2ll;
-		//m_array = (DANode<T>*)realloc(m_array, m_capacity * sizeof(DANode<T>));
+
 		DANode<T>* aux = new DANode<T>[m_capacity];
 
 		for (long long i = 0ll; i < m_occupied; i++)
@@ -179,8 +178,8 @@ std::cout << "B" << std::endl;
 		m_array = aux;
 	}
 
+	// Se foi alocado com sucesso
 	if (m_array) {
-std::cout << "C" << std::endl;
 		long long i = m_occupied;
 
 		while (i > 0ll && m_array[i - 1ll].key > key) {
@@ -195,10 +194,8 @@ std::cout << "C" << std::endl;
 
 		return true;
 	}
-	else {
-std::cout << "D" << std::endl;
+	else
 		return false;
-	}
 }
 
 template <typename T>
@@ -210,7 +207,7 @@ template <typename T>
 long long DAMultiset<T>::frequency(const T& key) {
 	long long pos = getElementPosition(key);
 
-	if (pos >= 0)
+	if (pos >= 0ll)
 		return m_array[pos].count;
 	else
 		return 0ll;
@@ -225,7 +222,7 @@ bool DAMultiset<T>::remove(const T& key, bool all_equal) {
 
 	if (all_equal || m_array[pos].count == 1ll) {
 		for (long long i = pos; i < m_occupied; i++)
-			m_array[i] = m_array[i + 1];
+			m_array[i] = m_array[i + 1ll];
 
 		m_size -= m_array[pos].count;
 		m_occupied--;
@@ -244,13 +241,106 @@ void DAMultiset<T>::clear() {
 }
 
 template <typename T>
-DAMultiset<T> DAMultiset<T>::_union(DAMultiset<T>& ms) {}
+void DAMultiset<T>::reset() {
+	delete[] m_array;
+	m_array = new DANode<T>;
+
+	m_size = m_occupied = 0ll;
+	m_capacity = 1ll;
+}
 
 template <typename T>
-DAMultiset<T> DAMultiset<T>::_intersection(DAMultiset<T>& ms) {}
+DAMultiset<T> DAMultiset<T>::_union(DAMultiset<T>& ms) {
+	DAMultiset<T> resp;
+	long long itr_1 = 0ll, itr_2 = 0ll;
+
+	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
+		if (m_array[itr_1].key < ms.m_array[itr_2].key) {
+			resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+			itr_1++;
+		}
+		else if (m_array[itr_1].key > ms.m_array[itr_2].key) {
+			resp.insert(ms.m_array[itr_2].key, ms.m_array[itr_2].count);
+			itr_2++;
+		}
+		else {
+			resp.insert(m_array[itr_1].key,
+				m_array[itr_1].count > ms.m_array[itr_2].count ?
+				m_array[itr_1].count : ms.m_array[itr_2].count);
+
+			itr_1++;
+			itr_2++;
+		}
+	}
+
+	while (itr_1 < m_occupied) {
+		resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+		itr_1++;
+	}
+
+	while (itr_2 < ms.m_occupied) {
+		resp.insert(ms.m_array[itr_2].key, ms.m_array[itr_2].count);
+		itr_2++;
+	}
+
+	return resp;
+}
 
 template <typename T>
-DAMultiset<T> DAMultiset<T>::_difference(DAMultiset<T>& ms) {}
+DAMultiset<T> DAMultiset<T>::_intersection(DAMultiset<T>& ms) {
+	DAMultiset<T> resp;
+	long long itr_1 = 0ll, itr_2 = 0ll;
+
+	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
+		if (m_array[itr_1].key < ms.m_array[itr_2].key)
+			itr_1++;
+		else if (m_array[itr_1].key > ms.m_array[itr_2].key)
+			itr_2++;
+		else {
+			resp.insert(m_array[itr_1].key,
+				m_array[itr_1].count < ms.m_array[itr_2].count ?
+				m_array[itr_1].count : ms.m_array[itr_2].count);
+
+			itr_1++;
+			itr_2++;
+		}
+	}
+
+	return resp;
+}
+
+template <typename T>
+DAMultiset<T> DAMultiset<T>::_difference(DAMultiset<T>& ms) {
+	DAMultiset<T> resp;
+
+	long long itr_1 = 0ll, itr_2 = 0ll;
+
+	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
+		if (m_array[itr_1].key < ms.m_array[itr_2].key) {
+			resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+			itr_1++;
+		}
+		else if (m_array[itr_1].key > ms.m_array[itr_2].key)
+			itr_2++;
+		else {
+			long long dif = m_array[itr_1].count > ms.m_array[itr_2].count ?
+				m_array[itr_1].count - ms.m_array[itr_2].count : 0ll;
+
+			if (dif > 0ll)
+				resp.insert(m_array[itr_1].key, dif);
+
+			itr_1++;
+			itr_2++;
+		}
+	}
+
+	while (itr_1 < m_occupied) {
+		resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+		itr_1++;
+	}
+
+	return resp;
+}
 
 //------------------------------------------------------------------- Depuração
 #ifdef DA_DEBUG
@@ -267,7 +357,7 @@ void DAMultiset<T>::printElements() {
 //-------------------------------------------------------- Operações auxiliares
 template <typename T>
 long long DAMultiset<T>::getElementPosition(const T& key) {
-	long long left = 0ll, right = m_occupied, middle;
+	long long left = 0ll, right = m_occupied - 1, middle;
 
     while (left <= right) {
         middle = left + (right - left) / 2; 

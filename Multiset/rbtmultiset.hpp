@@ -9,7 +9,7 @@
 
 
 // Flag para habilitar as funções de depuração
-#define RBT_DEBUG
+// #define RBT_DEBUG
 
 
 #ifndef RBT_MULTISET_HPP

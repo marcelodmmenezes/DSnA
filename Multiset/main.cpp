@@ -1,3 +1,14 @@
+/******************************************************************************
+ * INF 610 - Estruturas de Dados e Algoritmos - 2018/2                        *
+ *                                                                            *
+ * Lista de exercícios 3                                                      *
+ *                                                                            *
+ * Marcelo de Matos Menezes - 75254                                           *
+ *                                                                            *
+ *****************************************************************************/
+
+
+#include "damultiset.hpp"
 #include "rbtmultiset.hpp"
 
 #include <chrono>
@@ -7,167 +18,157 @@
 #include <set>
 
 
-#define NUMBER_OF_ELEMENTS 10000000
+enum BenchmarkType {
+	INSERT_CRESCENT_DATA,
+	INSERT_DECRESCENT_DATA,
+	INSERT_RANDOM_DATA,
+	RANDOM_QUERIES
+};
 
 
-void insertSequentialData(RBTMultiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
+template <typename T>
+void insertCrescentData(int n, T& ms);
 
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
-}
+template <typename T>
+void insertDecrescentData(int n, T& ms);
 
-void insertSequentialData(std::multiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
+template <typename T>
+void insertRandomData(int n, T& ms);
 
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
-}
+template <typename T>
+void randomQueries(int n, T& ms);
 
-void removeSequentialData(RBTMultiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.remove(i);
+void benchmark(int n, BenchmarkType type,
+	DAMultiset<int>& dams, RBTMultiset<int>& rbtms, std::multiset<int>& stdms, 
+	std::ostream& output = std::cout);
 
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.remove(i);
-}
 
-void removeSequentialData(std::multiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.erase(i);
-
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.erase(i);
-}
-
-void insertRandomData(RBTMultiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS; i++)
-		ms.insert(rand());
-}
-
-void insertRandomData(std::multiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS; i++)
-		ms.insert(rand());
-}
-
-int main(int argc, char* argv[]) {
-	std::ios::sync_with_stdio(false);
+int main() {
 	srand(time(nullptr));
-/*
-	RBTMultiset<int> rbtmsi;
+	std::ios_base::sync_with_stdio(false);
 
-	std::multiset<int> stdmsi;
+	DAMultiset<int> dams;
+	RBTMultiset<int> rbtms;
+	std::multiset<int> stdms;
 
-	//-------------------------------------------------- Insert sequential data
+	std::ostream& output = std::cout;
+
+	for (int i = 1000; i <= 100000; i *= 10) {
+		output << i << ":" << std::endl;
+
+		benchmark(i, INSERT_CRESCENT_DATA, dams, rbtms, stdms);
+
+		dams.reset();
+		rbtms.clear();
+		stdms.clear();
+
+		benchmark(i, INSERT_DECRESCENT_DATA, dams, rbtms, stdms);
+
+		dams.reset();
+		rbtms.clear();
+		stdms.clear();
+
+		benchmark(i, INSERT_RANDOM_DATA, dams, rbtms, stdms);
+		benchmark(i, RANDOM_QUERIES, dams, rbtms, stdms);
+	}
+}
+
+
+template <typename T>
+void insertCrescentData(int n, T& ms) {
+	for (int i = 0; i < n; i++)
+		ms.insert(i);
+}
+
+template <typename T>
+void insertDecrescentData(int n, T& ms) {
+	for (int i = n - 1; i >= 0; i--)
+		ms.insert(i);
+}
+
+template <typename T>
+void insertRandomData(int n, T& ms) {
+	for (int i = 0; i < n; i++)
+		ms.insert(rand());
+}
+
+template <typename T>
+void randomQueries(int n, T& ms) {
+	for (int i = 0; i < n; i++)
+		ms.contains(rand());
+}
+
+template <>
+void randomQueries<std::multiset<int>>(int n, std::multiset<int>& ms) {
+	for (int i = 0; i < n; i++)
+		ms.find(rand());
+}
+
+void benchmark(int n, BenchmarkType type,
+	DAMultiset<int>& dams, RBTMultiset<int>& rbtms, std::multiset<int>& stdms, 
+	std::ostream& output) {
 	auto clock = std::chrono::high_resolution_clock::now();
 
-	insertSequentialData(rbtmsi);
-
-	std::cout << "rbtmsi insertSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	insertSequentialData(stdmsi);
-
-	std::cout << "stdmsi insertSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	std::cout << std::endl;
-	//-------------------------------------------------------------------------
-
-	//-------------------------------------------------- Remove sequential data
-	std::cout << rbtmsi.size() << " " << stdmsi.size() << std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	removeSequentialData(rbtmsi);
-
-	std::cout << "rbtmsi removeSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	removeSequentialData(stdmsi);
-
-	std::cout << "stdmsi removeSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	std::cout << rbtmsi.size() << " " << stdmsi.size() << std::endl;
-
-	std::cout << std::endl;
-	//-------------------------------------------------------------------------
-rbtmsi.print();
-	//------------------------------------------------------ Insert random data
-	clock = std::chrono::high_resolution_clock::now();
-
-	insertRandomData(rbtmsi);
-
-	std::cout << "rbtmsi insertRandomData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	insertRandomData(stdmsi);
-
-	std::cout << "stdmsi insertRandomData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	std::cout << rbtmsi.size() << " " << stdmsi.size() << std::endl;
-
-	std::cout << std::endl;
-	//-------------------------------------------------------------------------
-*/
-
-	int n;
-	char c;
-	RBTMultiset<int> ms1, ms2;
-/*
-	while (std::cin >> c >> n) {
-		if (c == 'i')
-			ms1.insert(n);
-		else if (c == 'd')
-			ms1.remove(n);
-		else if (c == 'q')
+	switch (type) {
+		case INSERT_CRESCENT_DATA:
+			insertCrescentData(n, dams);
+			break;
+		case INSERT_DECRESCENT_DATA:
+			insertDecrescentData(n, dams);
+			break;
+		case INSERT_RANDOM_DATA:
+			insertRandomData(n, dams);
+			break;
+		case RANDOM_QUERIES:
+			randomQueries(n, dams);
 			break;
 	}
 
-	while (std::cin >> c >> n) {
-		if (c == 'i')
-			ms2.insert(n);
-		else if (c == 'd')
-			ms2.remove(n);
-		else if (c == 'q')
+	output << "\tda  : " <<
+		(std::chrono::high_resolution_clock::now() - clock).count()
+		<< std::endl;
+
+	clock = std::chrono::high_resolution_clock::now();
+
+
+	switch (type) {
+		case INSERT_CRESCENT_DATA:
+			insertCrescentData(n, rbtms);
+			break;
+		case INSERT_DECRESCENT_DATA:
+			insertDecrescentData(n, rbtms);
+			break;
+		case INSERT_RANDOM_DATA:
+			insertRandomData(n, rbtms);
+			break;
+		case RANDOM_QUERIES:
+			randomQueries(n, rbtms);
 			break;
 	}
-*/
-	for (int i = 0; i < 10; i++)
-		ms1.insert(i);
 
-	for (int i = 5; i < 15; i++)
-		ms2.insert(i);
+	output << "\trbt : " <<
+		(std::chrono::high_resolution_clock::now() - clock).count()
+		<< std::endl;
 
-	std::cout << std::endl;
-	ms1.printElements();
-	std::cout << std::endl;
-	ms2.printElements();
-	std::cout << std::endl << std::endl;
+	clock = std::chrono::high_resolution_clock::now();
 
-	std::cout << "Union: ";
-	ms1._union(ms2).printElements();
-	std::cout << std::endl;
-	std::cout << "Intersection: ";
-	ms1._intersection(ms2).printElements();
-	std::cout << std::endl;
-	std::cout << "Difference: ";
-	ms1._difference(ms2).printElements();
-	std::cout << std::endl;
+
+	switch (type) {
+		case INSERT_CRESCENT_DATA:
+			insertCrescentData(n, stdms);
+			break;
+		case INSERT_DECRESCENT_DATA:
+			insertDecrescentData(n, stdms);
+			break;
+		case INSERT_RANDOM_DATA:
+			insertRandomData(n, stdms);
+			break;
+		case RANDOM_QUERIES:
+			randomQueries(n, stdms);
+			break;
+	}
+
+	output << "\tstd : " <<
+		(std::chrono::high_resolution_clock::now() - clock).count()
+		<< std::endl << std::endl;
 }
