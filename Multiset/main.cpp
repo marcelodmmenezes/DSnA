@@ -130,7 +130,7 @@ rbtmsi.print();
 	int n;
 	char c;
 	RBTMultiset<int> ms1, ms2;
-
+/*
 	while (std::cin >> c >> n) {
 		if (c == 'i')
 			ms1.insert(n);
@@ -148,12 +148,18 @@ rbtmsi.print();
 		else if (c == 'q')
 			break;
 	}
+*/
+	for (int i = 0; i < 10; i++)
+		ms1.insert(i);
+
+	for (int i = 5; i < 15; i++)
+		ms2.insert(i);
 
 	std::cout << std::endl;
 	ms1.printElements();
 	std::cout << std::endl;
 	ms2.printElements();
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
 
 	std::cout << "Union: ";
 	ms1._union(ms2).printElements();

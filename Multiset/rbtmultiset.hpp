@@ -58,7 +58,7 @@ public:
 	bool empty();
 
 	// Retorna o tamanho do multiconjunto.
-	unsigned size();
+	long long size();
 	//-------------------------------------------------------------------------
 
 	//-------------------------------------------------- Gerenciamento de dados
@@ -98,7 +98,7 @@ public:
 #ifdef RBT_DEBUG
 	void printElements();
 	void printTree();
-#endif	// RBT_DEBUG
+#endif
 	//-------------------------------------------------------------------------
 
 private:
@@ -106,7 +106,7 @@ private:
 #ifdef RBT_DEBUG
 	void printElements(RBTNode<T>* node);
 	void printTree(int height, RBTNode<T>* node);
-#endif	// RBT_DEBUG
+#endif
 	//-------------------------------------------------------------------------
 
 	//---------------------------------------------------- Operações auxiliares
@@ -134,14 +134,14 @@ private:
 
 	RBTNode<T>* m_root;
 
-	unsigned m_size;
+	long long m_size;
 };
 
 
 //***** IMPLEMENTAÇÕES *****//
 
 template <typename T>
-RBTMultiset<T>::RBTMultiset() : m_root(nullptr), m_size(0u) {}
+RBTMultiset<T>::RBTMultiset() : m_root(nullptr), m_size(0ll) {}
 
 template <typename T>
 RBTMultiset<T>::~RBTMultiset() {
@@ -150,14 +150,15 @@ RBTMultiset<T>::~RBTMultiset() {
 
 template <typename T>
 bool RBTMultiset<T>::empty() {
-	return m_size == 0;
+	return m_size == 0ll;
 }
 
 template <typename T>
-unsigned RBTMultiset<T>::size() {
+long long RBTMultiset<T>::size() {
 	return m_size;
 }
 
+//------------------------------------------------------ Gerenciamento de dados
 template <typename T>
 void RBTMultiset<T>::insert(const T& key, long long qnt) {
 	// Se a árvore estiver vazia constrói a raiz
@@ -197,7 +198,7 @@ void RBTMultiset<T>::insert(const T& key, long long qnt) {
 		}
 	}
 
-	m_size++;
+	m_size += qnt;
 }
 
 template <typename T>
@@ -243,6 +244,7 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 		if (key == itr->key) {
 			if (!all_equal && itr->count > 1) {
 				itr->count--;
+				m_size--;
 				found = 1; // Nó encontrado, mas não é necessário remover
 			}
 			else
@@ -255,6 +257,8 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 	}
 
 	if (found == 2) {
+		m_size -= itr->count;
+
 		RBTNode<T>* placeholder;
 		RBTNode<T>* replacement;
 		bool del_placeholder = false;
@@ -339,9 +343,6 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 		}
 	}
 
-	if (found > 0)
-		m_size--;
-
 	return found; // true se o nó foi encontrado, false caso contrário
 }
 
@@ -349,7 +350,7 @@ template <typename T>
 void RBTMultiset<T>::clear() {
 	clear(m_root);
 	m_root = nullptr;
-	m_size = 0u;
+	m_size = 0ll;
 }
 
 //---------------------------------------------- Operações entre multiconjuntos
