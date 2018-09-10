@@ -348,8 +348,11 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 
 template <typename T>
 void RBTMultiset<T>::clear() {
-	clear(m_root);
-	m_root = nullptr;
+	if (m_root) {
+		clear(m_root);
+		m_root = nullptr;
+	}
+	
 	m_size = 0ll;
 }
 
