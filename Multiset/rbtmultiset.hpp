@@ -53,7 +53,7 @@ public:
 	RBTMultiset();
 	~RBTMultiset();
 	
-	//------------------------------------------------------ Capacidade/Tamanho
+	//-------------------------------------------------------------------- Info
 	// Testa se o multiconjunto está vazio.
 	bool empty();
 
@@ -63,7 +63,7 @@ public:
 
 	//-------------------------------------------------- Gerenciamento de dados
 	// Insere um elemento.
-	void insert(const T& key);
+	void insert(const T& key, long long qnt = 1ll);
 	
 	// Verifica se o elemento está contido no multiconjunto.
 	bool contains(const T& key);
@@ -85,26 +85,41 @@ public:
 	// usa "move semantics" (não há cópia).
 
 	// União (union é palavra reservada ¬¬)
-	RBTMultiset<T> _union(const RBTMultiset<T>& ms);
+	RBTMultiset<T> _union(RBTMultiset<T>& ms);
 
 	// Interseção
-	RBTMultiset<T> _intersection(const RBTMultiset<T>& ms);
+	RBTMultiset<T> _intersection(RBTMultiset<T>& ms);
 
 	// Diferença
-	RBTMultiset<T> _difference(const RBTMultiset<T>& ms);
+	RBTMultiset<T> _difference(RBTMultiset<T>& ms);
 	//-------------------------------------------------------------------------
 
 	//--------------------------------------------------------------- Depuração
 #ifdef RBT_DEBUG
-	void print();
-	void print(int height, RBTNode<T>* node);
+	void printElements();
+	void printTree();
 #endif	// RBT_DEBUG
 	//-------------------------------------------------------------------------
 
 private:
+	//--------------------------------------------------------------- Depuração
+#ifdef RBT_DEBUG
+	void printElements(RBTNode<T>* node);
+	void printTree(int height, RBTNode<T>* node);
+#endif	// RBT_DEBUG
+	//-------------------------------------------------------------------------
+
 	//---------------------------------------------------- Operações auxiliares
+	void _union(bool tree_1, RBTNode<T>* node,
+		RBTMultiset<T>& ms, RBTMultiset<T>& resp);
+	void _intersection(RBTNode<T>* node,
+		RBTMultiset<T>& ms, RBTMultiset<T>& resp);
+	void _difference(RBTNode<T>* node,
+		RBTMultiset<T>& ms, RBTMultiset<T>& resp);
+
 	void replaceNode(bool delete_old_node,
 		RBTNode<T>* old_node, RBTNode<T>* new_node);
+
 	void clear(RBTNode<T>* node);
 	RBTNode<T>* minimum(RBTNode<T>* node);
 	RBTNode<T>* maximum(RBTNode<T>* node);
@@ -144,8 +159,8 @@ unsigned RBTMultiset<T>::size() {
 }
 
 template <typename T>
-void RBTMultiset<T>::insert(const T& key) {
-	// Se a árvore estiver vazia constrói a raiz.
+void RBTMultiset<T>::insert(const T& key, long long qnt) {
+	// Se a árvore estiver vazia constrói a raiz
 	if (m_root == nullptr)
 		m_root = new RBTNode<T>(key, BLACK);
 	else {
@@ -153,22 +168,23 @@ void RBTMultiset<T>::insert(const T& key) {
 		RBTNode<T>* itr = m_root;
 		RBTNode<T>* parent;
 
-		// Procura o lugar onde o elemento deve ser inserido.
+		// Procura o lugar onde o elemento deve ser inserido
 		while (itr && !already_in_tree) {
 			parent = itr;
 
-			if (key == itr->key) { // Elemento já está na árvore.
-				itr->count++;
+			if (key == itr->key) { // Elemento já está na árvore
+				itr->count += qnt;
 				already_in_tree = true;
 			}
-			else if (key < itr->key) // Deve ser inserido na subárvore esquerda.
+			else if (key < itr->key) // Deve ser inserido na subárvore esquerda
 				itr = itr->left;
-			else // Deve ser inserido na subárvore direita.
+			else // Deve ser inserido na subárvore direita
 				itr = itr->right;
 		}
 
-		if (!already_in_tree) { // Se o elemento ainda não está na árvore.
+		if (!already_in_tree) { // Se o elemento ainda não está na árvore
 			RBTNode<T>* node = new RBTNode<T>(key, RED);
+			node->count = qnt;
 			node->parent = parent;
 
 			if (node->key < parent->key)
@@ -176,7 +192,7 @@ void RBTMultiset<T>::insert(const T& key) {
 			else
 				parent->right = node;
 
-			// Balanceia a árvore.
+			// Balanceia a árvore
 			balanceInsertion(node);
 		}
 	}
@@ -323,6 +339,9 @@ bool RBTMultiset<T>::remove(const T& key, bool all_equal) {
 		}
 	}
 
+	if (found > 0)
+		m_size--;
+
 	return found; // true se o nó foi encontrado, false caso contrário
 }
 
@@ -335,28 +354,70 @@ void RBTMultiset<T>::clear() {
 
 //---------------------------------------------- Operações entre multiconjuntos
 template <typename T>
-RBTMultiset<T> RBTMultiset<T>::_union(const RBTMultiset<T>& ms) {}
+RBTMultiset<T> RBTMultiset<T>::_union(RBTMultiset<T>& ms) {
+	RBTMultiset<T> result;
+
+	if (m_root)
+		_union(true, m_root, ms, result);
+
+	if (ms.m_root)
+		_union(false, ms.m_root, ms, result);
+
+	return result;
+}
 
 template <typename T>
-RBTMultiset<T> RBTMultiset<T>::_intersection(const RBTMultiset<T>& ms) {}
+RBTMultiset<T> RBTMultiset<T>::_intersection(RBTMultiset<T>& ms) {
+	RBTMultiset<T> result;
+
+	if (m_root)
+		_intersection(m_root, ms, result);
+
+	return result;
+}
 
 template <typename T>
-RBTMultiset<T> RBTMultiset<T>::_difference(const RBTMultiset<T>& ms) {}
+RBTMultiset<T> RBTMultiset<T>::_difference(RBTMultiset<T>& ms) {
+	RBTMultiset<T> result;
+
+	if (m_root)
+		_difference(m_root, ms, result);
+
+	return result;	
+}
 
 //------------------------------------------------------------------- Depuração
 #ifdef RBT_DEBUG
 
 template <typename T>
-void RBTMultiset<T>::print() {
+void RBTMultiset<T>::printElements() {
+	if (m_root)
+		printElements(m_root);
+}
+
+template <typename T>
+void RBTMultiset<T>::printTree() {
 	std::cout << std::endl;
-	print(0, m_root);
+	printTree(0, m_root);
 	std::cout << std::endl;
 }
 
 template <typename T>
-void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
+void RBTMultiset<T>::printElements(RBTNode<T>* node) {
+	if (node->left)
+		printElements(node->left);
+
+	for (long long i = 0; i < node->count; i++)
+		std::cout << node->key << " ";
+
+	if (node->right)
+		printElements(node->right);
+}
+
+template <typename T>
+void RBTMultiset<T>::printTree(int height, RBTNode<T>* node) {
 	if (node) {
-		print(height + 1, node->right);
+		printTree(height + 1, node->right);
 
 		for (int i = 0; i < 9 * height; i++)
 			std::cout << " ";
@@ -396,7 +457,7 @@ void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
 
 #endif	// Operating System stuff
 
-		print(height + 1, node->left);
+		printTree(height + 1, node->left);
 	}
 	else {
 		for (int i = 0; i < 9 * height; i++)
@@ -412,6 +473,54 @@ void RBTMultiset<T>::print(int height, RBTNode<T>* node) {
 #endif	// RBT_DEBUG
 
 //-------------------------------------------------------- Operações auxiliares
+template <typename T>
+void RBTMultiset<T>::_union(bool tree_1, RBTNode<T>* node,
+	RBTMultiset<T>& ms, RBTMultiset<T>& resp) {
+	if (node->left)
+		_union(tree_1, node->left, ms, resp);
+
+	long long freq;
+
+	if (tree_1)
+		freq = ms.frequency(node->key);
+	else
+		freq = frequency(node->key);
+
+	if (!resp.contains(node->key))
+		resp.insert(node->key, freq > node->count ? freq : node->count);
+
+	if (node->right)
+		_union(tree_1, node->right, ms, resp);
+}
+
+template <typename T>
+void RBTMultiset<T>::_intersection(RBTNode<T>* node,
+	RBTMultiset<T>& ms, RBTMultiset<T>& resp) {
+	if (node->left)
+		_intersection(node->left, ms, resp);
+
+	long long freq = ms.frequency(node->key);
+
+	if (freq > 0)
+		resp.insert(node->key, freq < node->count ? freq : node->count);
+
+	if (node->right)
+		_intersection(node->right, ms, resp);
+}
+
+template <typename T>
+void RBTMultiset<T>::_difference(RBTNode<T>* node,
+	RBTMultiset<T>& ms, RBTMultiset<T>& resp) {
+	if (node->left)
+		_difference(node->left, ms, resp);
+
+	if (!ms.contains(node->key))
+		resp.insert(node->key);
+
+	if (node->right)
+		_difference(node->right, ms, resp);
+}
+
 template <typename T>
 void RBTMultiset<T>::replaceNode(bool delete_old_node,
 	RBTNode<T>* old_node, RBTNode<T>* new_node) {
