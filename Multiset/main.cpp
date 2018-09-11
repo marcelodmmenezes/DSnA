@@ -11,11 +11,13 @@
 #include "damultiset.hpp"
 #include "rbtmultiset.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <set>
+#include <vector>
 
 
 enum BenchmarkType {
@@ -23,19 +25,23 @@ enum BenchmarkType {
 	INSERT_DECRESCENT_DATA,
 	INSERT_RANDOM_DATA,
 	RANDOM_QUERIES,
-	RANDOM_REMOVAL
+	RANDOM_REMOVAL,
+
+	UNION,
+	INTERSECTION,
+	DIFFERENCE
 };
 
 
 template <typename T>
-void insertCrescentData(int n, T& ms) {
-	for (int i = 0; i < n; i++)
+void insertCrescentData(int l, int u, T& ms) {
+	for (int i = l; i < u; i++)
 		ms.insert(i);
 }
 
 template <typename T>
-void insertDecrescentData(int n, T& ms) {
-	for (int i = n - 1; i >= 0; i--)
+void insertDecrescentData(int l, int u, T& ms) {
+	for (int i = u - 1; i >= l; i--)
 		ms.insert(i);
 }
 
@@ -76,10 +82,10 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 
 	switch (type) {
 		case INSERT_CRESCENT_DATA:
-			insertCrescentData(n, dams);
+			insertCrescentData(0, n, dams);
 			break;
 		case INSERT_DECRESCENT_DATA:
-			insertDecrescentData(n, dams);
+			insertDecrescentData(0, n, dams);
 			break;
 		case INSERT_RANDOM_DATA:
 			insertRandomData(n, dams);
@@ -98,13 +104,12 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 
 	clock = std::chrono::high_resolution_clock::now();
 
-
 	switch (type) {
 		case INSERT_CRESCENT_DATA:
-			insertCrescentData(n, rbtms);
+			insertCrescentData(0, n, rbtms);
 			break;
 		case INSERT_DECRESCENT_DATA:
-			insertDecrescentData(n, rbtms);
+			insertDecrescentData(0, n, rbtms);
 			break;
 		case INSERT_RANDOM_DATA:
 			insertRandomData(n, rbtms);
@@ -123,13 +128,12 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 
 	clock = std::chrono::high_resolution_clock::now();
 
-
 	switch (type) {
 		case INSERT_CRESCENT_DATA:
-			insertCrescentData(n, stdms);
+			insertCrescentData(0, n, stdms);
 			break;
 		case INSERT_DECRESCENT_DATA:
-			insertDecrescentData(n, stdms);
+			insertDecrescentData(0, n, stdms);
 			break;
 		case INSERT_RANDOM_DATA:
 			insertRandomData(n, stdms);
@@ -148,38 +152,205 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 }
 
 
+void benchmarkSetOperations(BenchmarkType type,
+	DAMultiset<int>& dams_1, DAMultiset<int>& dams_2,
+	RBTMultiset<int>& rbtms_1, RBTMultiset<int>& rbtms_2,
+	std::multiset<int>& stdms_1, std::multiset<int>& stdms_2, 
+	std::ostream& output = std::cout) {
+	auto clock = std::chrono::high_resolution_clock::now();
+
+	switch (type) {
+		case UNION:
+			dams_1._union(dams_2);
+			break;
+		case INTERSECTION:
+			dams_1._intersection(dams_2);
+			break;
+		case DIFFERENCE:
+			dams_1._difference(dams_2);
+			break;
+	}
+
+	output << "\t\tda  : " <<
+		(std::chrono::high_resolution_clock::now() - clock).count()
+		<< std::endl;
+
+	clock = std::chrono::high_resolution_clock::now();
+
+	switch (type) {
+		case UNION:
+			rbtms_1._union(rbtms_2);
+			break;
+		case INTERSECTION:
+			rbtms_1._intersection(rbtms_2);
+			break;
+		case DIFFERENCE:
+			rbtms_1._difference(rbtms_2);
+			break;
+	}
+
+	output << "\t\trbt : " <<
+		(std::chrono::high_resolution_clock::now() - clock).count()
+		<< std::endl;
+
+	clock = std::chrono::high_resolution_clock::now();
+
+	// As operações entre conjuntos da algorithm requerem
+	// um novo conjunto para se armazenar os dados
+	// A criação do conjunto auxiliar entra na contagem do tempo pois as
+	// implementações anteriores criam o conjunto nas operações
+	// std::back_inserter para melhorar a eficiência de inserção
+
+	std::vector<int> aux;
+
+	switch (type) {
+		case UNION:
+			std::set_union(stdms_1.begin(), stdms_1.end(),
+				stdms_2.begin(), stdms_2.end(), std::back_inserter(aux));
+			break;
+		case INTERSECTION:
+			std::set_intersection(stdms_1.begin(), stdms_1.end(),
+				stdms_2.begin(), stdms_2.end(), std::back_inserter(aux));
+			break;
+		case DIFFERENCE:
+			std::set_difference(stdms_1.begin(), stdms_1.end(),
+				stdms_2.begin(), stdms_2.end(), std::back_inserter(aux));
+			break;
+	}
+
+	output << "\t\tstd : " <<
+		(std::chrono::high_resolution_clock::now() - clock).count()
+		<< std::endl << std::endl;
+}
+
+
+
 int main() {
 	srand(time(nullptr));
 	std::ios_base::sync_with_stdio(false);
 
-	DAMultiset<int> dams;
-	RBTMultiset<int> rbtms;
-	std::multiset<int> stdms;
+	DAMultiset<int> dams_1, dams_2;
+	RBTMultiset<int> rbtms_1, rbtms_2;
+	std::multiset<int> stdms_1, stdms_2;
 
+	// Para ficar fácil de redirecionar a saída caso necessário
 	std::ostream& output = std::cout;
+
+	output << "Benchmarking data manipulation:\n" << std::endl;
 
 	for (int i = 1000; i <= 100000; i *= 10) {
 		output << i << ":" << std::endl;
 
-		benchmarkDataManipulation(i, INSERT_CRESCENT_DATA, dams, rbtms, stdms);
+		benchmarkDataManipulation(i, INSERT_CRESCENT_DATA,
+			dams_1, rbtms_1, stdms_1, output);
 
-		dams.reset();
-		rbtms.clear();
-		stdms.clear();
+		dams_1.reset();
+		rbtms_1.clear();
+		stdms_1.clear();
 
 		benchmarkDataManipulation(i, INSERT_DECRESCENT_DATA,
-			dams, rbtms, stdms);
+			dams_1, rbtms_1, stdms_1, output);
 
-		dams.reset();
-		rbtms.clear();
-		stdms.clear();
+		dams_1.reset();
+		rbtms_1.clear();
+		stdms_1.clear();
 
-		benchmarkDataManipulation(i, INSERT_RANDOM_DATA, dams, rbtms, stdms);
-		benchmarkDataManipulation(i, RANDOM_QUERIES, dams, rbtms, stdms);
-		benchmarkDataManipulation(i, RANDOM_REMOVAL, dams, rbtms, stdms);
+		benchmarkDataManipulation(i, INSERT_RANDOM_DATA,
+			dams_1, rbtms_1, stdms_1, output);
+		
+		benchmarkDataManipulation(i, RANDOM_QUERIES,
+			dams_1, rbtms_1, stdms_1, output);
 
-		dams.reset();
-		rbtms.clear();
-		stdms.clear();
+		benchmarkDataManipulation(i, RANDOM_REMOVAL,
+			dams_1, rbtms_1, stdms_1, output);
+
+		dams_1.reset();
+		rbtms_1.clear();
+		stdms_1.clear();
+	}
+
+	output << "Benchmarking set operations:\n" << std::endl;
+
+	for (int i = 1000; i <= 100000; i *= 10) {
+		output << i << ":" << std::endl;
+
+		output << "\n\tElementos distintos:" << std::endl;
+
+		// Todas as estruturas são ordenadas, portanto para esse teste
+		// não importa a ordem de inserção dos elementos
+		insertCrescentData(0, i, dams_1);
+		insertCrescentData(i + 1, 2 * (i + 1), dams_2);
+		insertCrescentData(0, i, rbtms_1);
+		insertCrescentData(i + 1, 2 * (i + 1), rbtms_2);
+		insertCrescentData(0, i, stdms_1);
+		insertCrescentData(i + 1, 2 * (i + 1), stdms_2);
+
+		benchmarkSetOperations(UNION, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		benchmarkSetOperations(DIFFERENCE, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		dams_1.reset();
+		dams_2.reset();
+		rbtms_1.clear();
+		rbtms_2.clear();
+		stdms_1.clear();
+		stdms_2.clear();
+
+		output << "\n\tElementos iguais:" << std::endl;
+
+		// Todas as estruturas são ordenadas, portanto para esse teste
+		// não importa a ordem de inserção dos elementos
+		insertCrescentData(0, i, dams_1);
+		insertCrescentData(0, i, dams_2);
+		insertCrescentData(0, i, rbtms_1);
+		insertCrescentData(0, i, rbtms_2);
+		insertCrescentData(0, i, stdms_1);
+		insertCrescentData(0, i, stdms_2);
+
+		benchmarkSetOperations(UNION, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		benchmarkSetOperations(DIFFERENCE, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		dams_1.reset();
+		dams_2.reset();
+		rbtms_1.clear();
+		rbtms_2.clear();
+		stdms_1.clear();
+		stdms_2.clear();
+
+		output << "\n\tElementos aleatórios:" << std::endl;
+
+		insertRandomData(i, dams_1);
+		insertRandomData(i, dams_2);
+		insertRandomData(i, rbtms_1);
+		insertRandomData(i, rbtms_2);
+		insertRandomData(i, stdms_1);
+		insertRandomData(i, stdms_2);
+
+		benchmarkSetOperations(UNION, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		benchmarkSetOperations(DIFFERENCE, dams_1, dams_2,
+			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		dams_1.reset();
+		dams_2.reset();
+		rbtms_1.clear();
+		rbtms_2.clear();
+		stdms_1.clear();
+		stdms_2.clear();
 	}
 }

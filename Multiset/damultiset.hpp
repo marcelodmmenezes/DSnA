@@ -9,7 +9,7 @@
 
 
 // Flag para habilitar as funções de depuração
-#define DA_DEBUG
+// #define DA_DEBUG
 
 
 #ifndef DA_MULTISET_HPP
