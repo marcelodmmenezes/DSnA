@@ -15,9 +15,13 @@
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
 #include <iostream>
 #include <set>
 #include <vector>
+
+
+#define WRITE_TO_FILE
 
 
 enum BenchmarkType {
@@ -234,7 +238,13 @@ int main() {
 	std::multiset<int> stdms_1, stdms_2;
 
 	// Para ficar fácil de redirecionar a saída caso necessário
+
+#ifdef WRITE_TO_FILE
+	std::ofstream output;
+	output.open("output.txt", std::ios::out);
+#else
 	std::ostream& output = std::cout;
+#endif
 
 	output << "Benchmarking data manipulation:\n" << std::endl;
 
@@ -353,4 +363,8 @@ int main() {
 		stdms_1.clear();
 		stdms_2.clear();
 	}
+
+#ifdef WRITE_TO_FILE
+	output.close();
+#endif
 }

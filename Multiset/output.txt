@@ -1,0 +1,196 @@
+Benchmarking data manipulation:
+
+1000:
+	da  : 83023
+	rbt : 215705
+	std : 187768
+
+	da  : 1485796
+	rbt : 157432
+	std : 159346
+
+	da  : 945274
+	rbt : 290087
+	std : 292666
+
+	da  : 186960
+	rbt : 119591
+	std : 194122
+
+	da  : 194774
+	rbt : 201376
+	std : 190418
+
+10000:
+	da  : 1006067
+	rbt : 2090683
+	std : 1452301
+
+	da  : 66842505
+	rbt : 800745
+	std : 907745
+
+	da  : 28393841
+	rbt : 1452330
+	std : 1530866
+
+	da  : 901897
+	rbt : 831455
+	std : 1207640
+
+	da  : 944491
+	rbt : 1269060
+	std : 1194989
+
+100000:
+	da  : 3930166
+	rbt : 16517772
+	std : 14289057
+
+	da  : 5052247158
+	rbt : 15344441
+	std : 14189193
+
+	da  : 2533698434
+	rbt : 22429954
+	std : 23111825
+
+	da  : 13416949
+	rbt : 19618332
+	std : 25416147
+
+	da  : 13811117
+	rbt : 26131948
+	std : 24335360
+
+Benchmarking set operations:
+
+1000:
+
+	Elementos distintos:
+		da  : 52869
+		rbt : 193766
+		std : 34107
+
+		da  : 1327
+		rbt : 6548
+		std : 6374
+
+		da  : 19185
+		rbt : 86927
+		std : 15915
+
+
+	Elementos iguais:
+		da  : 20035
+		rbt : 87951
+		std : 20905
+
+		da  : 19404
+		rbt : 88734
+		std : 21787
+
+		da  : 1778
+		rbt : 8372
+		std : 10238
+
+
+	Elementos aleatórios:
+		da  : 50484
+		rbt : 226370
+		std : 60710
+
+		da  : 11739
+		rbt : 34612
+		std : 35854
+
+		da  : 30181
+		rbt : 127441
+		std : 47635
+
+10000:
+
+	Elementos distintos:
+		da  : 693214
+		rbt : 2544472
+		std : 330936
+
+		da  : 10584
+		rbt : 63023
+		std : 65128
+
+		da  : 242990
+		rbt : 1125517
+		std : 159404
+
+
+	Elementos iguais:
+		da  : 255273
+		rbt : 1140990
+		std : 206074
+
+		da  : 268913
+		rbt : 1311009
+		std : 238900
+
+		da  : 19043
+		rbt : 119057
+		std : 102388
+
+
+	Elementos aleatórios:
+		da  : 652558
+		rbt : 3081802
+		std : 703236
+
+		da  : 114806
+		rbt : 416023
+		std : 455739
+
+		da  : 348855
+		rbt : 1594996
+		std : 569981
+
+100000:
+
+	Elementos distintos:
+		da  : 7640352
+		rbt : 45951080
+		std : 8731742
+
+		da  : 144074
+		rbt : 1501576
+		std : 1860692
+
+		da  : 3386065
+		rbt : 19581108
+		std : 3035529
+
+
+	Elementos iguais:
+		da  : 3848051
+		rbt : 19601873
+		std : 3505752
+
+		da  : 3299833
+		rbt : 19505013
+		std : 3612004
+
+		da  : 266914
+		rbt : 2234007
+		std : 2091978
+
+
+	Elementos aleatórios:
+		da  : 8680144
+		rbt : 60557971
+		std : 16724167
+
+		da  : 1195230
+		rbt : 10724895
+		std : 11890494
+
+		da  : 4718627
+		rbt : 35809185
+		std : 15510684
+
