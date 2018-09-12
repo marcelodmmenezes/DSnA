@@ -1,5 +1,17 @@
+/******************************************************************************
+ * INF 610 - Estruturas de Dados e Algoritmos - 2018/2                        *
+ *                                                                            *
+ * Lista de exercícios 3                                                      *
+ *                                                                            *
+ * Marcelo de Matos Menezes - 75254                                           *
+ *                                                                            *
+ *****************************************************************************/
+
+
+#include "damultiset.hpp"
 #include "rbtmultiset.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <ctime>
@@ -7,167 +19,76 @@
 #include <set>
 
 
-#define NUMBER_OF_ELEMENTS 10000000
+using namespace std;
 
 
-void insertSequentialData(RBTMultiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
-
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
-}
-
-void insertSequentialData(std::multiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
-
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.insert(i);
-}
-
-void removeSequentialData(RBTMultiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.remove(i);
-
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.remove(i);
-}
-
-void removeSequentialData(std::multiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.erase(i);
-
-	for (int i = 0; i < NUMBER_OF_ELEMENTS / 2; i++)
-		ms.erase(i);
-}
-
-void insertRandomData(RBTMultiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS; i++)
-		ms.insert(rand());
-}
-
-void insertRandomData(std::multiset<int>& ms) {
-	for (int i = 0; i < NUMBER_OF_ELEMENTS; i++)
-		ms.insert(rand());
-}
-
-int main(int argc, char* argv[]) {
-	std::ios::sync_with_stdio(false);
+int main() {
 	srand(time(nullptr));
-/*
-	RBTMultiset<int> rbtmsi;
-
-	std::multiset<int> stdmsi;
-
-	//-------------------------------------------------- Insert sequential data
-	auto clock = std::chrono::high_resolution_clock::now();
-
-	insertSequentialData(rbtmsi);
-
-	std::cout << "rbtmsi insertSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	insertSequentialData(stdmsi);
-
-	std::cout << "stdmsi insertSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	std::cout << std::endl;
-	//-------------------------------------------------------------------------
-
-	//-------------------------------------------------- Remove sequential data
-	std::cout << rbtmsi.size() << " " << stdmsi.size() << std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	removeSequentialData(rbtmsi);
-
-	std::cout << "rbtmsi removeSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	removeSequentialData(stdmsi);
-
-	std::cout << "stdmsi removeSequentialData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	std::cout << rbtmsi.size() << " " << stdmsi.size() << std::endl;
-
-	std::cout << std::endl;
-	//-------------------------------------------------------------------------
-rbtmsi.print();
-	//------------------------------------------------------ Insert random data
-	clock = std::chrono::high_resolution_clock::now();
-
-	insertRandomData(rbtmsi);
-
-	std::cout << "rbtmsi insertRandomData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	clock = std::chrono::high_resolution_clock::now();
-
-	insertRandomData(stdmsi);
-
-	std::cout << "stdmsi insertRandomData: " <<
-		(std::chrono::high_resolution_clock::now() - clock).count()
-		<< std::endl;
-
-	std::cout << rbtmsi.size() << " " << stdmsi.size() << std::endl;
-
-	std::cout << std::endl;
-	//-------------------------------------------------------------------------
-*/
+	std::ios_base::sync_with_stdio(false);
 
 	int n;
-	char c;
+	DAMultiset<int> da1, da2;
 	RBTMultiset<int> ms1, ms2;
-/*
-	while (std::cin >> c >> n) {
-		if (c == 'i')
-			ms1.insert(n);
-		else if (c == 'd')
-			ms1.remove(n);
-		else if (c == 'q')
-			break;
-	}
 
-	while (std::cin >> c >> n) {
-		if (c == 'i')
-			ms2.insert(n);
-		else if (c == 'd')
-			ms2.remove(n);
-		else if (c == 'q')
-			break;
-	}
-*/
-	for (int i = 0; i < 10; i++)
-		ms1.insert(i);
+	while (cin >> n, n != 0)
+		ms1.insert(n), da1.insert(n);
 
-	for (int i = 5; i < 15; i++)
-		ms2.insert(i);
+	while (cin >> n, n != 0)
+		ms2.insert(n), da2.insert(n);
 
-	std::cout << std::endl;
+	cout << "\nDA:\n" << endl;
+	
+	da1.printElements();
+	cout << endl;
+	da2.printElements();
+	cout << endl << endl;
+
+	cout << "Union:" << endl;
+	
+	da1._union(da2).printElements();
+	cout << endl;
+	da2._union(da1).printElements();
+	cout << endl;
+
+	cout << "Intersection:" << endl;
+	
+	da1._intersection(da2).printElements();
+	cout << endl;
+	da2._intersection(da1).printElements();
+	cout << endl;
+
+	cout << "Difference:" << endl;
+	
+	da1._difference(da2).printElements();
+	cout << endl;
+	da2._difference(da1).printElements();
+	cout << endl << endl;
+
+	cout << "\nRBT:\n" << endl;
+	
 	ms1.printElements();
-	std::cout << std::endl;
+	cout << endl;
 	ms2.printElements();
-	std::cout << std::endl << std::endl;
+	cout << endl;
 
-	std::cout << "Union: ";
+	cout << "Union:" << endl;
+	
 	ms1._union(ms2).printElements();
-	std::cout << std::endl;
-	std::cout << "Intersection: ";
+	cout << endl;
+	ms2._union(ms1).printElements();
+	cout << endl;
+
+	cout << "Intersection:" << endl;
+	
 	ms1._intersection(ms2).printElements();
-	std::cout << std::endl;
-	std::cout << "Difference: ";
+	cout << endl;
+	ms2._intersection(ms1).printElements();
+	cout << endl;
+
+	cout << "Difference:" << endl;
+	
 	ms1._difference(ms2).printElements();
-	std::cout << std::endl;
+	cout << endl;
+	ms2._difference(ms1).printElements();
+	cout << endl;
 }

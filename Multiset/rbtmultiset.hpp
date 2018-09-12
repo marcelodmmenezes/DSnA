@@ -9,7 +9,7 @@
 
 
 // Flag para habilitar as funções de depuração
-// #define RBT_DEBUG
+#define RBT_DEBUG
 
 
 #ifndef RBT_MULTISET_HPP
@@ -110,19 +110,13 @@ private:
 	//-------------------------------------------------------------------------
 
 	//---------------------------------------------------- Operações auxiliares
-	void _union(bool tree_1, RBTNode<T>* node,
-		RBTMultiset<T>& ms, RBTMultiset<T>& resp);
-	void _intersection(RBTNode<T>* node,
-		RBTMultiset<T>& ms, RBTMultiset<T>& resp);
-	void _difference(RBTNode<T>* node,
-		RBTMultiset<T>& ms, RBTMultiset<T>& resp);
-
 	void replaceNode(bool delete_old_node,
 		RBTNode<T>* old_node, RBTNode<T>* new_node);
 
 	void clear(RBTNode<T>* node);
 	RBTNode<T>* minimum(RBTNode<T>* node);
 	RBTNode<T>* maximum(RBTNode<T>* node);
+	RBTNode<T>* successor(RBTNode<T>* node);
 	//-------------------------------------------------------------------------
 
 	//---------------------------------------------- Operações de balanceamento
@@ -361,11 +355,37 @@ template <typename T>
 RBTMultiset<T> RBTMultiset<T>::_union(RBTMultiset<T>& ms) {
 	RBTMultiset<T> result;
 
-	if (m_root)
-		_union(true, m_root, ms, result);
+	RBTNode<T>* itr_1 = minimum(m_root);
+	RBTNode<T>* itr_2 = minimum(ms.m_root);
 
-	if (ms.m_root)
-		_union(false, ms.m_root, ms, result);
+	while (itr_1 && itr_2) {
+		if (itr_1->key < itr_2->key) {
+			result.insert(itr_1->key, itr_1->count);
+			itr_1 = successor(itr_1);
+		}
+		else if (itr_1->key > itr_2->key) {
+			result.insert(itr_2->key, itr_2->count);
+			itr_2 = successor(itr_2);
+		}
+		else {
+			result.insert(itr_1->key,
+				itr_1->count > itr_2->count ?
+				itr_1->count : itr_2->count);
+
+			itr_1 = successor(itr_1);
+			itr_2 = successor(itr_2);
+		}
+	}
+
+	while (itr_1) {
+		result.insert(itr_1->key, itr_1->count);
+		itr_1 = successor(itr_1);
+	}
+
+	while (itr_2) {
+		result.insert(itr_2->key, itr_2->count);
+		itr_2 = successor(itr_2);
+	}
 
 	return result;
 }
@@ -374,8 +394,23 @@ template <typename T>
 RBTMultiset<T> RBTMultiset<T>::_intersection(RBTMultiset<T>& ms) {
 	RBTMultiset<T> result;
 
-	if (m_root)
-		_intersection(m_root, ms, result);
+	RBTNode<T>* itr_1 = minimum(m_root);
+	RBTNode<T>* itr_2 = minimum(ms.m_root);
+
+	while (itr_1 && itr_2) {
+		if (itr_1->key < itr_2->key)
+			itr_1 = successor(itr_1);
+		else if (itr_1->key > itr_2->key)
+			itr_2 = successor(itr_2);
+		else {
+			result.insert(itr_1->key,
+				itr_1->count < itr_2->count ?
+				itr_1->count : itr_2->count);
+
+			itr_1 = successor(itr_1);
+			itr_2 = successor(itr_2);
+		}
+	}
 
 	return result;
 }
@@ -384,8 +419,33 @@ template <typename T>
 RBTMultiset<T> RBTMultiset<T>::_difference(RBTMultiset<T>& ms) {
 	RBTMultiset<T> result;
 
-	if (m_root)
-		_difference(m_root, ms, result);
+	RBTNode<T>* itr_1 = minimum(m_root);
+	RBTNode<T>* itr_2 = minimum(ms.m_root);
+
+	while (itr_1 && itr_2) {
+		if (itr_1->key < itr_2->key) {
+			result.insert(itr_1->key, itr_1->count);
+			itr_1 = successor(itr_1);
+		}
+		else if (itr_1->key > itr_2->key) {
+			itr_2 = successor(itr_2);
+		}
+		else {
+			long long dif = itr_1->count > itr_2->count ?
+				itr_1->count - itr_2->count : 0ll;
+
+			if (dif > 0ll)
+				result.insert(itr_1->key, dif);
+
+			itr_1 = successor(itr_1);
+			itr_2 = successor(itr_2);
+		}
+	}
+
+	while (itr_1) {
+		result.insert(itr_1->key, itr_1->count);
+		itr_1 = successor(itr_1);
+	}
 
 	return result;	
 }
@@ -478,54 +538,6 @@ void RBTMultiset<T>::printTree(int height, RBTNode<T>* node) {
 
 //-------------------------------------------------------- Operações auxiliares
 template <typename T>
-void RBTMultiset<T>::_union(bool tree_1, RBTNode<T>* node,
-	RBTMultiset<T>& ms, RBTMultiset<T>& resp) {
-	if (node->left)
-		_union(tree_1, node->left, ms, resp);
-
-	long long freq;
-
-	if (tree_1)
-		freq = ms.frequency(node->key);
-	else
-		freq = frequency(node->key);
-
-	if (!resp.contains(node->key))
-		resp.insert(node->key, freq > node->count ? freq : node->count);
-
-	if (node->right)
-		_union(tree_1, node->right, ms, resp);
-}
-
-template <typename T>
-void RBTMultiset<T>::_intersection(RBTNode<T>* node,
-	RBTMultiset<T>& ms, RBTMultiset<T>& resp) {
-	if (node->left)
-		_intersection(node->left, ms, resp);
-
-	long long freq = ms.frequency(node->key);
-
-	if (freq > 0)
-		resp.insert(node->key, freq < node->count ? freq : node->count);
-
-	if (node->right)
-		_intersection(node->right, ms, resp);
-}
-
-template <typename T>
-void RBTMultiset<T>::_difference(RBTNode<T>* node,
-	RBTMultiset<T>& ms, RBTMultiset<T>& resp) {
-	if (node->left)
-		_difference(node->left, ms, resp);
-
-	if (!ms.contains(node->key))
-		resp.insert(node->key);
-
-	if (node->right)
-		_difference(node->right, ms, resp);
-}
-
-template <typename T>
 void RBTMultiset<T>::replaceNode(bool delete_old_node,
 	RBTNode<T>* old_node, RBTNode<T>* new_node) {
 	if (!old_node->parent)
@@ -569,6 +581,21 @@ RBTNode<T>* RBTMultiset<T>::maximum(RBTNode<T>* node) {
 
 	while (itr->right)
 		itr = itr->right;
+
+	return itr;
+}
+
+template <typename T>
+RBTNode<T>* RBTMultiset<T>::successor(RBTNode<T>* node) {
+	if (node->right)
+		return minimum(node->right);
+
+	RBTNode<T>* itr = node->parent;
+
+	while (itr && node == itr->right) {
+		node = itr;
+		itr = node->parent;
+	}
 
 	return itr;
 }

@@ -9,7 +9,7 @@
 
 
 // Flag para habilitar as funções de depuração
-// #define DA_DEBUG
+#define DA_DEBUG
 
 
 #ifndef DA_MULTISET_HPP
@@ -251,20 +251,20 @@ void DAMultiset<T>::reset() {
 
 template <typename T>
 DAMultiset<T> DAMultiset<T>::_union(DAMultiset<T>& ms) {
-	DAMultiset<T> resp;
+	DAMultiset<T> result;
 	long long itr_1 = 0ll, itr_2 = 0ll;
 
 	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
 		if (m_array[itr_1].key < ms.m_array[itr_2].key) {
-			resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+			result.insert(m_array[itr_1].key, m_array[itr_1].count);
 			itr_1++;
 		}
 		else if (m_array[itr_1].key > ms.m_array[itr_2].key) {
-			resp.insert(ms.m_array[itr_2].key, ms.m_array[itr_2].count);
+			result.insert(ms.m_array[itr_2].key, ms.m_array[itr_2].count);
 			itr_2++;
 		}
 		else {
-			resp.insert(m_array[itr_1].key,
+			result.insert(m_array[itr_1].key,
 				m_array[itr_1].count > ms.m_array[itr_2].count ?
 				m_array[itr_1].count : ms.m_array[itr_2].count);
 
@@ -274,21 +274,21 @@ DAMultiset<T> DAMultiset<T>::_union(DAMultiset<T>& ms) {
 	}
 
 	while (itr_1 < m_occupied) {
-		resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+		result.insert(m_array[itr_1].key, m_array[itr_1].count);
 		itr_1++;
 	}
 
 	while (itr_2 < ms.m_occupied) {
-		resp.insert(ms.m_array[itr_2].key, ms.m_array[itr_2].count);
+		result.insert(ms.m_array[itr_2].key, ms.m_array[itr_2].count);
 		itr_2++;
 	}
 
-	return resp;
+	return result;
 }
 
 template <typename T>
 DAMultiset<T> DAMultiset<T>::_intersection(DAMultiset<T>& ms) {
-	DAMultiset<T> resp;
+	DAMultiset<T> result;
 	long long itr_1 = 0ll, itr_2 = 0ll;
 
 	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
@@ -297,7 +297,7 @@ DAMultiset<T> DAMultiset<T>::_intersection(DAMultiset<T>& ms) {
 		else if (m_array[itr_1].key > ms.m_array[itr_2].key)
 			itr_2++;
 		else {
-			resp.insert(m_array[itr_1].key,
+			result.insert(m_array[itr_1].key,
 				m_array[itr_1].count < ms.m_array[itr_2].count ?
 				m_array[itr_1].count : ms.m_array[itr_2].count);
 
@@ -306,18 +306,18 @@ DAMultiset<T> DAMultiset<T>::_intersection(DAMultiset<T>& ms) {
 		}
 	}
 
-	return resp;
+	return result;
 }
 
 template <typename T>
 DAMultiset<T> DAMultiset<T>::_difference(DAMultiset<T>& ms) {
-	DAMultiset<T> resp;
+	DAMultiset<T> result;
 
 	long long itr_1 = 0ll, itr_2 = 0ll;
 
 	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
 		if (m_array[itr_1].key < ms.m_array[itr_2].key) {
-			resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+			result.insert(m_array[itr_1].key, m_array[itr_1].count);
 			itr_1++;
 		}
 		else if (m_array[itr_1].key > ms.m_array[itr_2].key)
@@ -327,7 +327,7 @@ DAMultiset<T> DAMultiset<T>::_difference(DAMultiset<T>& ms) {
 				m_array[itr_1].count - ms.m_array[itr_2].count : 0ll;
 
 			if (dif > 0ll)
-				resp.insert(m_array[itr_1].key, dif);
+				result.insert(m_array[itr_1].key, dif);
 
 			itr_1++;
 			itr_2++;
@@ -335,11 +335,11 @@ DAMultiset<T> DAMultiset<T>::_difference(DAMultiset<T>& ms) {
 	}
 
 	while (itr_1 < m_occupied) {
-		resp.insert(m_array[itr_1].key, m_array[itr_1].count);
+		result.insert(m_array[itr_1].key, m_array[itr_1].count);
 		itr_1++;
 	}
 
-	return resp;
+	return result;
 }
 
 //------------------------------------------------------------------- Depuração
