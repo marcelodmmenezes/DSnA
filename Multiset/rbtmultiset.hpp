@@ -8,10 +8,6 @@
  *****************************************************************************/
 
 
-// Flag para habilitar as funções de depuração
-#define RBT_DEBUG
-
-
 #ifndef RBT_MULTISET_HPP
 #define RBT_MULTISET_HPP
 
@@ -519,7 +515,7 @@ void RBTMultiset<T>::printTree(int height, RBTNode<T>* node) {
 
 		SetConsoleTextAttribute(console, default_color);
 
-#endif	// Operating System stuff
+#endif	// Coisas do sistema operacional
 
 		printTree(height + 1, node->left);
 	}

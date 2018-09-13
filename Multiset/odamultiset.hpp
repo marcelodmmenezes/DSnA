@@ -8,17 +8,11 @@
  *****************************************************************************/
 
 
-// Flag para habilitar as funções de depuração
-#define DA_DEBUG
+#ifndef ODA_MULTISET_HPP
+#define ODA_MULTISET_HPP
 
 
-#ifndef DA_MULTISET_HPP
-#define DA_MULTISET_HPP
-
-
-#include <cstdlib>
-
-#ifdef DA_DEBUG
+#ifdef ODA_DEBUG
 	#include <iostream>
 #endif
 
@@ -26,9 +20,9 @@
 //***** DEFINIÇÕES *****//
 
 template <typename T>
-struct DANode {
-	DANode() : count(1ll) {}
-	DANode(T k, long long c) : key(k), count(c) {}
+struct ODANode {
+	ODANode() : count(1ll) {}
+	ODANode(T k, long long c) : key(k), count(c) {}
 
 	T key;
 	long long count;
@@ -36,11 +30,11 @@ struct DANode {
 
 
 template <typename T>
-class DAMultiset {
+class ODAMultiset {
 public:
-	DAMultiset();
-	DAMultiset(long long capacity);
-	~DAMultiset();
+	ODAMultiset();
+	ODAMultiset(long long capacity);
+	~ODAMultiset();
 
 	//-------------------------------------------------------------------- Info
 	// Testa se o multiconjunto está vazio.
@@ -83,17 +77,17 @@ public:
 	// usa "move semantics" (não há cópia).
 
 	// União (union é palavra reservada ¬¬)
-	DAMultiset<T> _union(DAMultiset<T>& ms);
+	ODAMultiset<T> _union(ODAMultiset<T>& ms);
 
 	// Interseção
-	DAMultiset<T> _intersection(DAMultiset<T>& ms);
+	ODAMultiset<T> _intersection(ODAMultiset<T>& ms);
 
 	// Diferença
-	DAMultiset<T> _difference(DAMultiset<T>& ms);
+	ODAMultiset<T> _difference(ODAMultiset<T>& ms);
 	//-------------------------------------------------------------------------
 
 	//--------------------------------------------------------------- Depuração
-#ifdef DA_DEBUG
+#ifdef ODA_DEBUG
 	void printElements();
 #endif
 	//-------------------------------------------------------------------------
@@ -104,7 +98,7 @@ private:
 	long long getElementPosition(const T& key);
 	//-------------------------------------------------------------------------
 
-	DANode<T>* m_array;
+	ODANode<T>* m_array;
 	long long m_size; // Quantidade de elemenos
 	long long m_occupied; // Memória ocupada
 	long long m_capacity; // Memória alocada
@@ -114,48 +108,48 @@ private:
 //***** IMPLEMENTAÇÕES *****//
 
 template <typename T>
-DAMultiset<T>::DAMultiset() : m_size(0ll), m_occupied(0ll), m_capacity(1ll) {
-	m_array = new DANode<T>;
+ODAMultiset<T>::ODAMultiset() : m_size(0ll), m_occupied(0ll), m_capacity(1ll) {
+	m_array = new ODANode<T>;
 }
 
 template <typename T>
-DAMultiset<T>::DAMultiset(long long capacity) :
+ODAMultiset<T>::ODAMultiset(long long capacity) :
 	m_size(0ll), m_occupied(0ll), m_capacity(capacity) {
 	if (m_capacity <= 0ll)
 		m_capacity = 1ll;
 
-	m_array = new DANode<T>[m_capacity];
+	m_array = new ODANode<T>[m_capacity];
 }
 
 template <typename T>
-DAMultiset<T>::~DAMultiset() {
+ODAMultiset<T>::~ODAMultiset() {
 	clear();
 	delete[] m_array;
 }
 
 template <typename T>
-bool DAMultiset<T>::empty() {
+bool ODAMultiset<T>::empty() {
 	return m_size == 0ll;
 }
 
 template <typename T>
-long long DAMultiset<T>::size() {
+long long ODAMultiset<T>::size() {
 	return m_size;
 }
 
 template <typename T>
-long long DAMultiset<T>::unique() {
+long long ODAMultiset<T>::unique() {
 	return m_occupied;
 }
 
 template <typename T>
-long long DAMultiset<T>::capacity() {
+long long ODAMultiset<T>::capacity() {
 	return m_capacity;
 }
 
 //------------------------------------------------------ Gerenciamento de dados
 template <typename T>
-bool DAMultiset<T>::insert(const T& key, long long qnt) {
+bool ODAMultiset<T>::insert(const T& key, long long qnt) {
 	long long pos = getElementPosition(key);
 
 	// Se o elemento já estiver no array basta incrementar seu contador
@@ -169,7 +163,7 @@ bool DAMultiset<T>::insert(const T& key, long long qnt) {
 	if (m_occupied == m_capacity) {
 		m_capacity *= 2ll;
 
-		DANode<T>* aux = new DANode<T>[m_capacity];
+		ODANode<T>* aux = new ODANode<T>[m_capacity];
 
 		for (long long i = 0ll; i < m_occupied; i++)
 			aux[i] = m_array[i];
@@ -187,7 +181,7 @@ bool DAMultiset<T>::insert(const T& key, long long qnt) {
 			i--;
 		}
 
-		m_array[i] = DANode<T>(key, qnt);
+		m_array[i] = ODANode<T>(key, qnt);
 
 		m_size += qnt;
 		m_occupied++;
@@ -199,12 +193,12 @@ bool DAMultiset<T>::insert(const T& key, long long qnt) {
 }
 
 template <typename T>
-bool DAMultiset<T>::contains(const T& key) {
+bool ODAMultiset<T>::contains(const T& key) {
 	return getElementPosition(key) >= 0;
 }
 
 template <typename T>
-long long DAMultiset<T>::frequency(const T& key) {
+long long ODAMultiset<T>::frequency(const T& key) {
 	long long pos = getElementPosition(key);
 
 	if (pos >= 0ll)
@@ -214,7 +208,7 @@ long long DAMultiset<T>::frequency(const T& key) {
 }
 
 template <typename T>
-bool DAMultiset<T>::remove(const T& key, bool all_equal) {
+bool ODAMultiset<T>::remove(const T& key, bool all_equal) {
 	long long pos = getElementPosition(key);
 
 	if (pos < 0ll)
@@ -236,22 +230,22 @@ bool DAMultiset<T>::remove(const T& key, bool all_equal) {
 }
 
 template <typename T>
-void DAMultiset<T>::clear() {
+void ODAMultiset<T>::clear() {
 	m_size = m_occupied = 0ll;
 }
 
 template <typename T>
-void DAMultiset<T>::reset() {
+void ODAMultiset<T>::reset() {
 	delete[] m_array;
-	m_array = new DANode<T>;
+	m_array = new ODANode<T>;
 
 	m_size = m_occupied = 0ll;
 	m_capacity = 1ll;
 }
 
 template <typename T>
-DAMultiset<T> DAMultiset<T>::_union(DAMultiset<T>& ms) {
-	DAMultiset<T> result;
+ODAMultiset<T> ODAMultiset<T>::_union(ODAMultiset<T>& ms) {
+	ODAMultiset<T> result;
 	long long itr_1 = 0ll, itr_2 = 0ll;
 
 	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
@@ -287,8 +281,8 @@ DAMultiset<T> DAMultiset<T>::_union(DAMultiset<T>& ms) {
 }
 
 template <typename T>
-DAMultiset<T> DAMultiset<T>::_intersection(DAMultiset<T>& ms) {
-	DAMultiset<T> result;
+ODAMultiset<T> ODAMultiset<T>::_intersection(ODAMultiset<T>& ms) {
+	ODAMultiset<T> result;
 	long long itr_1 = 0ll, itr_2 = 0ll;
 
 	while (itr_1 < m_occupied && itr_2 < ms.m_occupied) {
@@ -310,8 +304,8 @@ DAMultiset<T> DAMultiset<T>::_intersection(DAMultiset<T>& ms) {
 }
 
 template <typename T>
-DAMultiset<T> DAMultiset<T>::_difference(DAMultiset<T>& ms) {
-	DAMultiset<T> result;
+ODAMultiset<T> ODAMultiset<T>::_difference(ODAMultiset<T>& ms) {
+	ODAMultiset<T> result;
 
 	long long itr_1 = 0ll, itr_2 = 0ll;
 
@@ -343,20 +337,20 @@ DAMultiset<T> DAMultiset<T>::_difference(DAMultiset<T>& ms) {
 }
 
 //------------------------------------------------------------------- Depuração
-#ifdef DA_DEBUG
+#ifdef ODA_DEBUG
 
 template <typename T>
-void DAMultiset<T>::printElements() {
+void ODAMultiset<T>::printElements() {
 	for (long long i = 0ll; i < m_occupied; i++)
 		for (long long j = 0ll; j < m_array[i].count; j++)
 			std::cout << m_array[i].key << " ";
 }
 
-#endif	// DA_DEBUG
+#endif	// ODA_DEBUG
 
 //-------------------------------------------------------- Operações auxiliares
 template <typename T>
-long long DAMultiset<T>::getElementPosition(const T& key) {
+long long ODAMultiset<T>::getElementPosition(const T& key) {
 	long long left = 0ll, right = m_occupied - 1, middle;
 
     while (left <= right) {
@@ -376,4 +370,4 @@ long long DAMultiset<T>::getElementPosition(const T& key) {
 }
 
 
-#endif	// DA_MULTISET_HPP
+#endif	// ODA_MULTISET_HPP

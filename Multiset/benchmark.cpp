@@ -8,7 +8,7 @@
  *****************************************************************************/
 
 
-#include "damultiset.hpp"
+#include "odamultiset.hpp"
 #include "rbtmultiset.hpp"
 
 #include <algorithm>
@@ -80,7 +80,7 @@ void randomRemoval<std::multiset<int>>(int n, std::multiset<int>& ms) {
 }
 
 void benchmarkDataManipulation(int n, BenchmarkType type,
-	DAMultiset<int>& dams, RBTMultiset<int>& rbtms, std::multiset<int>& stdms, 
+	ODAMultiset<int>& dams, RBTMultiset<int>& rbtms, std::multiset<int>& stdms, 
 	std::ostream& output = std::cout) {
 	auto clock = std::chrono::high_resolution_clock::now();
 
@@ -157,7 +157,7 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 
 
 void benchmarkSetOperations(BenchmarkType type,
-	DAMultiset<int>& dams_1, DAMultiset<int>& dams_2,
+	ODAMultiset<int>& dams_1, ODAMultiset<int>& dams_2,
 	RBTMultiset<int>& rbtms_1, RBTMultiset<int>& rbtms_2,
 	std::multiset<int>& stdms_1, std::multiset<int>& stdms_2, 
 	std::ostream& output = std::cout) {
@@ -233,7 +233,7 @@ int main() {
 	srand(time(nullptr));
 	std::ios_base::sync_with_stdio(false);
 
-	DAMultiset<int> dams_1, dams_2;
+	ODAMultiset<int> dams_1, dams_2;
 	RBTMultiset<int> rbtms_1, rbtms_2;
 	std::multiset<int> stdms_1, stdms_2;
 

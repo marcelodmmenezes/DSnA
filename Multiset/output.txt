@@ -1,0 +1,239 @@
+Benchmarking data manipulation:
+
+1000:
+	da  : 0
+	rbt : 0
+	std : 0
+
+	da  : 1000400
+	rbt : 0
+	std : 0
+
+	da  : 0
+	rbt : 0
+	std : 1010000
+
+	da  : 0
+	rbt : 0
+	std : 0
+
+	da  : 0
+	rbt : 0
+	std : 0
+
+10000:
+	da  : 998800
+	rbt : 989800
+	std : 1009400
+
+	da  : 44995600
+	rbt : 1000400
+	std : 0
+
+	da  : 17011300
+	rbt : 2000100
+	std : 1981600
+
+	da  : 1016400
+	rbt : 0
+	std : 999500
+
+	da  : 2985500
+	rbt : 1998800
+	std : 1016800
+
+100000:
+	da  : 3865400
+	rbt : 10996700
+	std : 8998800
+
+	da  : 4418908800
+	rbt : 10953700
+	std : 8997200
+
+	da  : 226939100
+	rbt : 15988800
+	std : 25999200
+
+	da  : 9992500
+	rbt : 10996400
+	std : 20993700
+
+	da  : 86973300
+	rbt : 16997200
+	std : 22992900
+
+Benchmarking set operations:
+
+1000:
+
+	Elementos distintos:
+		da  : 0
+		rbt : 0
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 0
+
+
+	Elementos iguais:
+		da  : 0
+		rbt : 0
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 0
+
+
+	Elementos aleatórios:
+		da  : 0
+		rbt : 1002000
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 0
+
+10000:
+
+	Elementos distintos:
+		da  : 997200
+		rbt : 3000500
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 0
+
+		da  : 0
+		rbt : 2000200
+		std : 0
+
+
+	Elementos iguais:
+		da  : 0
+		rbt : 998800
+		std : 0
+
+		da  : 999500
+		rbt : 999700
+		std : 0
+
+		da  : 0
+		rbt : 0
+		std : 1000400
+
+
+	Elementos aleatórios:
+		da  : 0
+		rbt : 2997300
+		std : 0
+
+		da  : 1002300
+		rbt : 0
+		std : 998500
+
+		da  : 0
+		rbt : 998500
+		std : 1002000
+
+100000:
+
+	Elementos distintos:
+		da  : 8021100
+		rbt : 37057200
+		std : 5020900
+
+		da  : 1000400
+		rbt : 1981900
+		std : 2014500
+
+		da  : 4024400
+		rbt : 16271400
+		std : 2774000
+
+
+	Elementos iguais:
+		da  : 4112500
+		rbt : 18906300
+		std : 4044900
+
+		da  : 4041000
+		rbt : 18023600
+		std : 4880900
+
+		da  : 0
+		rbt : 2992200
+		std : 4004500
+
+
+	Elementos aleatórios:
+		da  : 1001000
+		rbt : 7000600
+		std : 11015000
+
+		da  : 961600
+		rbt : 6012300
+		std : 9999200
+
+		da  : 983500
+		rbt : 4015700
+		std : 10001100
+
+1000000:
+
+	Elementos distintos:
+		da  : 93968100
+		rbt : 391631600
+		std : 50983600
+
+		da  : 1999800
+		rbt : 19993600
+		std : 22992600
+
+		da  : 43987200
+		rbt : 176995300
+		std : 25995300
+
+
+	Elementos iguais:
+		da  : 47072600
+		rbt : 207956200
+		std : 42986500
+
+		da  : 45986700
+		rbt : 193949300
+		std : 43980100
+
+		da  : 1983500
+		rbt : 33992200
+		std : 36998500
+
+
+	Elementos aleatórios:
+		da  : 999400
+		rbt : 6998000
+		std : 147957500
+
+		da  : 0
+		rbt : 6997700
+		std : 147957400
+
+		da  : 999800
+		rbt : 3998700
+		std : 140958800
+
