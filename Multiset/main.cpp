@@ -33,7 +33,7 @@ enum BenchmarkType {
 
 	UNION,
 	INTERSECTION,
-	DIFFERENCE
+	DIFF
 };
 
 
@@ -170,7 +170,7 @@ void benchmarkSetOperations(BenchmarkType type,
 		case INTERSECTION:
 			dams_1._intersection(dams_2);
 			break;
-		case DIFFERENCE:
+		case DIFF:
 			dams_1._difference(dams_2);
 			break;
 	}
@@ -188,7 +188,7 @@ void benchmarkSetOperations(BenchmarkType type,
 		case INTERSECTION:
 			rbtms_1._intersection(rbtms_2);
 			break;
-		case DIFFERENCE:
+		case DIFF:
 			rbtms_1._difference(rbtms_2);
 			break;
 	}
@@ -216,7 +216,7 @@ void benchmarkSetOperations(BenchmarkType type,
 			std::set_intersection(stdms_1.begin(), stdms_1.end(),
 				stdms_2.begin(), stdms_2.end(), std::back_inserter(aux));
 			break;
-		case DIFFERENCE:
+		case DIFF:
 			std::set_difference(stdms_1.begin(), stdms_1.end(),
 				stdms_2.begin(), stdms_2.end(), std::back_inserter(aux));
 			break;
@@ -281,7 +281,7 @@ int main() {
 
 	output << "Benchmarking set operations:\n" << std::endl;
 
-	for (int i = 1000; i <= 100000; i *= 10) {
+	for (int i = 1000; i <= 1000000; i *= 10) {
 		output << i << ":" << std::endl;
 
 		output << "\n\tElementos distintos:" << std::endl;
@@ -301,7 +301,7 @@ int main() {
 		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
-		benchmarkSetOperations(DIFFERENCE, dams_1, dams_2,
+		benchmarkSetOperations(DIFF, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
 		dams_1.reset();
@@ -328,7 +328,7 @@ int main() {
 		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
-		benchmarkSetOperations(DIFFERENCE, dams_1, dams_2,
+		benchmarkSetOperations(DIFF, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
 		dams_1.reset();
@@ -353,7 +353,7 @@ int main() {
 		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
-		benchmarkSetOperations(DIFFERENCE, dams_1, dams_2,
+		benchmarkSetOperations(DIFF, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
 		dams_1.reset();
