@@ -102,7 +102,7 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 			break;
 	}
 
-	output << "\tda  : " <<
+	output << "\toda  : " <<
 		(std::chrono::high_resolution_clock::now() - clock).count()
 		<< std::endl;
 
@@ -175,7 +175,7 @@ void benchmarkSetOperations(BenchmarkType type,
 			break;
 	}
 
-	output << "\t\tda  : " <<
+	output << "\t\toda  : " <<
 		(std::chrono::high_resolution_clock::now() - clock).count()
 		<< std::endl;
 
@@ -226,7 +226,6 @@ void benchmarkSetOperations(BenchmarkType type,
 		(std::chrono::high_resolution_clock::now() - clock).count()
 		<< std::endl << std::endl;
 }
-
 
 
 int main() {

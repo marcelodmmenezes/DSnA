@@ -164,16 +164,34 @@ bool ODAMultiset<T>::insert(const T& key, long long qnt) {
 		m_capacity *= 2ll;
 
 		ODANode<T>* aux = new ODANode<T>[m_capacity];
+		
+		// Se conseguiu alocar o array, copia o array antigo
+		//acrescentando o novo elemento
+		if (aux) {
+			long long i = 0ll;
 
-		for (long long i = 0ll; i < m_occupied; i++)
-			aux[i] = m_array[i];
+			while (i < m_occupied && m_array[i].key < key) {
+				aux[i] = m_array[i];
+				i++;
+			}
 
-		delete[] m_array;
-		m_array = aux;
+			aux[i] = ODANode<T>(key, qnt);
+
+			while (i < m_occupied) {
+				aux[i + 1ll] = m_array[i];
+				i++;
+			}
+
+			m_size += qnt;
+			m_occupied++;
+
+			delete[] m_array;
+			m_array = aux;
+
+			return true;
+		}
 	}
-
-	// Se foi alocado com sucesso
-	if (m_array) {
+	else {
 		long long i = m_occupied;
 
 		while (i > 0ll && m_array[i - 1ll].key > key) {
@@ -188,8 +206,8 @@ bool ODAMultiset<T>::insert(const T& key, long long qnt) {
 
 		return true;
 	}
-	else
-		return false;
+
+	return false;
 }
 
 template <typename T>
