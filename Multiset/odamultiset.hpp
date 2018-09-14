@@ -16,6 +16,8 @@
 	#include <iostream>
 #endif
 
+#include <utility>
+
 
 //***** DEFINIÇÕES *****//
 
@@ -33,6 +35,7 @@ template <typename T>
 class ODAMultiset {
 public:
 	ODAMultiset();
+	ODAMultiset(ODAMultiset<T>&& ms);
 	ODAMultiset(long long capacity);
 	~ODAMultiset();
 
@@ -51,7 +54,7 @@ public:
 	//-------------------------------------------------------------------------
 
 	//-------------------------------------------------- Gerenciamento de dados
-	// Insere um elemento.
+	// Insere um ou mais elementos.
 	bool insert(const T& key, long long qnt = 1ll);
 	
 	// Verifica se o elemento está contido no multiconjunto.
@@ -110,6 +113,13 @@ private:
 template <typename T>
 ODAMultiset<T>::ODAMultiset() : m_size(0ll), m_occupied(0ll), m_capacity(1ll) {
 	m_array = new ODANode<T>;
+}
+
+template <typename T>
+ODAMultiset<T>::ODAMultiset(ODAMultiset<T>&& ms) : m_size(ms.m_size),
+	m_occupied(ms.m_occupied), m_capacity(ms.m_capacity), m_array(ms.m_array) {
+	ms.m_size = ms.m_occupied = ms.m_capacity = 0ll;
+	ms.m_array = nullptr;
 }
 
 template <typename T>
@@ -295,7 +305,7 @@ ODAMultiset<T> ODAMultiset<T>::_union(ODAMultiset<T>& ms) {
 		itr_2++;
 	}
 
-	return result;
+	return std::move(result);
 }
 
 template <typename T>
@@ -318,7 +328,7 @@ ODAMultiset<T> ODAMultiset<T>::_intersection(ODAMultiset<T>& ms) {
 		}
 	}
 
-	return result;
+	return std::move(result);
 }
 
 template <typename T>
@@ -351,7 +361,7 @@ ODAMultiset<T> ODAMultiset<T>::_difference(ODAMultiset<T>& ms) {
 		itr_1++;
 	}
 
-	return result;
+	return std::move(result);
 }
 
 //------------------------------------------------------------------- Depuração
@@ -372,7 +382,7 @@ long long ODAMultiset<T>::getElementPosition(const T& key) {
 	long long left = 0ll, right = m_occupied - 1, middle;
 
     while (left <= right) {
-        middle = left + (right - left) / 2; 
+        middle = (right + left) / 2;
 
 		// Se encontrar a chave retorna
         if (m_array[middle].key == key)

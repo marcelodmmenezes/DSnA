@@ -19,6 +19,8 @@
 	#endif
 #endif
 
+#include <utility>
+
 
 //***** DEFINIÇÕES *****//
 
@@ -47,6 +49,7 @@ template <typename T>
 class RBTMultiset {
 public:
 	RBTMultiset();
+	RBTMultiset(RBTMultiset<T>&& ms);
 	~RBTMultiset();
 	
 	//-------------------------------------------------------------------- Info
@@ -58,7 +61,7 @@ public:
 	//-------------------------------------------------------------------------
 
 	//-------------------------------------------------- Gerenciamento de dados
-	// Insere um elemento.
+	// Insere um ou mais elementos.
 	void insert(const T& key, long long qnt = 1ll);
 	
 	// Verifica se o elemento está contido no multiconjunto.
@@ -132,6 +135,13 @@ private:
 
 template <typename T>
 RBTMultiset<T>::RBTMultiset() : m_root(nullptr), m_size(0ll) {}
+
+template <typename T>
+RBTMultiset<T>::RBTMultiset(RBTMultiset<T>&& ms) :
+	m_root(ms.m_root), m_size(ms.m_size) {
+	ms.m_size = 0ll;
+	ms.m_root = nullptr;
+}
 
 template <typename T>
 RBTMultiset<T>::~RBTMultiset() {
@@ -383,7 +393,7 @@ RBTMultiset<T> RBTMultiset<T>::_union(RBTMultiset<T>& ms) {
 		itr_2 = successor(itr_2);
 	}
 
-	return result;
+	return std::move(result);
 }
 
 template <typename T>
@@ -408,7 +418,7 @@ RBTMultiset<T> RBTMultiset<T>::_intersection(RBTMultiset<T>& ms) {
 		}
 	}
 
-	return result;
+	return std::move(result);
 }
 
 template <typename T>
@@ -443,7 +453,7 @@ RBTMultiset<T> RBTMultiset<T>::_difference(RBTMultiset<T>& ms) {
 		itr_1 = successor(itr_1);
 	}
 
-	return result;	
+	return std::move(result);
 }
 
 //------------------------------------------------------------------- Depuração

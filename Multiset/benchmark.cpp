@@ -21,9 +21,6 @@
 #include <vector>
 
 
-#define WRITE_TO_FILE
-
-
 enum BenchmarkType {
 	INSERT_CRESCENT_DATA,
 	INSERT_DECRESCENT_DATA,
@@ -36,6 +33,13 @@ enum BenchmarkType {
 	DIFF
 };
 
+
+void generateRandomData(int n, std::vector<int>& v) {
+	v.reserve(n);
+
+	for (int i = 0; i < n; i++)
+		v.push_back(rand());
+}
 
 template <typename T>
 void insertCrescentData(int l, int u, T& ms) {
@@ -50,38 +54,49 @@ void insertDecrescentData(int l, int u, T& ms) {
 }
 
 template <typename T>
-void insertRandomData(int n, T& ms) {
+void insertRandomData(int n, T& ms, std::vector<int>& v) {
 	for (int i = 0; i < n; i++)
-		ms.insert(rand());
+		ms.insert(v[i]);
 }
 
 template <typename T>
-void randomQueries(int n, T& ms) {
+void randomQueries(int n, T& ms, std::vector<int>& v) {
 	for (int i = 0; i < n; i++)
-		ms.contains(rand());
+		ms.contains(v[i]);
 }
 
 template <>
-void randomQueries<std::multiset<int>>(int n, std::multiset<int>& ms) {
+void randomQueries<std::multiset<int>>(int n,
+	std::multiset<int>& ms, std::vector<int>& v) {
 	for (int i = 0; i < n; i++)
-		ms.find(rand());
+		ms.find(v[i]);
 }
 
 template <typename T>
-void randomRemoval(int n, T& ms) {
+void randomRemoval(int n, T& ms, std::vector<int>& v) {
 	for (int i = 0; i < n; i++)
-		ms.remove(rand());
+		ms.remove(v[i]);
 }
 
 template <>
-void randomRemoval<std::multiset<int>>(int n, std::multiset<int>& ms) {
+void randomRemoval<std::multiset<int>>(int n,
+	std::multiset<int>& ms, std::vector<int>& v) {
 	for (int i = 0; i < n; i++)
-		ms.erase(rand());
+		ms.erase(v[i]);
 }
 
 void benchmarkDataManipulation(int n, BenchmarkType type,
 	ODAMultiset<int>& dams, RBTMultiset<int>& rbtms, std::multiset<int>& stdms, 
 	std::ostream& output = std::cout) {
+	// Os mesmos dados aleatórios são usados em cada estrutura
+	// para manter a comparação justa
+	std::vector<int> random_data;
+
+	if (type == INSERT_RANDOM_DATA ||
+		type == RANDOM_QUERIES ||
+		type == RANDOM_REMOVAL)
+		generateRandomData(n, random_data);
+
 	auto clock = std::chrono::high_resolution_clock::now();
 
 	switch (type) {
@@ -92,17 +107,17 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 			insertDecrescentData(0, n, dams);
 			break;
 		case INSERT_RANDOM_DATA:
-			insertRandomData(n, dams);
+			insertRandomData(n, dams, random_data);
 			break;
 		case RANDOM_QUERIES:
-			randomQueries(n, dams);
+			randomQueries(n, dams, random_data);
 			break;
 		case RANDOM_REMOVAL:
-			randomRemoval(n, dams);
+			randomRemoval(n, dams, random_data);
 			break;
 	}
 
-	output << "\toda  : " <<
+	output << "\toda : " <<
 		(std::chrono::high_resolution_clock::now() - clock).count()
 		<< std::endl;
 
@@ -116,13 +131,13 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 			insertDecrescentData(0, n, rbtms);
 			break;
 		case INSERT_RANDOM_DATA:
-			insertRandomData(n, rbtms);
+			insertRandomData(n, rbtms, random_data);
 			break;
 		case RANDOM_QUERIES:
-			randomQueries(n, rbtms);
+			randomQueries(n, rbtms, random_data);
 			break;
 		case RANDOM_REMOVAL:
-			randomRemoval(n, rbtms);
+			randomRemoval(n, rbtms, random_data);
 			break;
 	}
 
@@ -140,13 +155,13 @@ void benchmarkDataManipulation(int n, BenchmarkType type,
 			insertDecrescentData(0, n, stdms);
 			break;
 		case INSERT_RANDOM_DATA:
-			insertRandomData(n, stdms);
+			insertRandomData(n, stdms, random_data);
 			break;
 		case RANDOM_QUERIES:
-			randomQueries(n, stdms);
+			randomQueries(n, stdms, random_data);
 			break;
 		case RANDOM_REMOVAL:
-			randomRemoval(n, stdms);
+			randomRemoval(n, stdms, random_data);
 			break;
 	}
 
@@ -175,7 +190,7 @@ void benchmarkSetOperations(BenchmarkType type,
 			break;
 	}
 
-	output << "\t\toda  : " <<
+	output << "\t\toda : " <<
 		(std::chrono::high_resolution_clock::now() - clock).count()
 		<< std::endl;
 
@@ -245,10 +260,13 @@ int main() {
 	std::ostream& output = std::cout;
 #endif
 
-	output << "Benchmarking data manipulation:\n" << std::endl;
+	output << "Comparacao de manipulacao de dados:\n" << std::endl;
 
 	for (int i = 1000; i <= 100000; i *= 10) {
-		output << i << ":" << std::endl;
+		output << i << " elementos:\n" << std::endl;
+
+		output << "\tTempo de insercao de dados ordenados "
+			"de forma crescente (nanosegundos):\n" << std::endl;
 
 		benchmarkDataManipulation(i, INSERT_CRESCENT_DATA,
 			dams_1, rbtms_1, stdms_1, output);
@@ -257,6 +275,9 @@ int main() {
 		rbtms_1.clear();
 		stdms_1.clear();
 
+		output << "\tTempo de insercao de dados ordenados "
+			"de forma decrescente (nanosegundos):\n" << std::endl;
+
 		benchmarkDataManipulation(i, INSERT_DECRESCENT_DATA,
 			dams_1, rbtms_1, stdms_1, output);
 
@@ -264,11 +285,20 @@ int main() {
 		rbtms_1.clear();
 		stdms_1.clear();
 
+		output << "\tTempo de insercao de dados aleatorios (nanosegundos):\n"
+			<< std::endl;
+
 		benchmarkDataManipulation(i, INSERT_RANDOM_DATA,
 			dams_1, rbtms_1, stdms_1, output);
+
+		output << "\tTempo de " + std::to_string(i) +
+			" consultas aleatorias (nanosegundos):\n" << std::endl;
 		
 		benchmarkDataManipulation(i, RANDOM_QUERIES,
 			dams_1, rbtms_1, stdms_1, output);
+
+		output << "\tTempo de " + std::to_string(i) +
+			" remocoes aleatorias (nanosegundos):\n" << std::endl;
 
 		benchmarkDataManipulation(i, RANDOM_REMOVAL,
 			dams_1, rbtms_1, stdms_1, output);
@@ -278,10 +308,10 @@ int main() {
 		stdms_1.clear();
 	}
 
-	output << "Benchmarking set operations:\n" << std::endl;
+	output << "Comparacao de operacoes entre multiconjuntos:\n" << std::endl;
 
 	for (int i = 1000; i <= 1000000; i *= 10) {
-		output << i << ":" << std::endl;
+		output << i << " elementos:" << std::endl;
 
 		output << "\n\tElementos distintos:" << std::endl;
 
@@ -294,11 +324,17 @@ int main() {
 		insertCrescentData(0, i, stdms_1);
 		insertCrescentData(i + 1, 2 * (i + 1), stdms_2);
 
+		output << "\n\tUNIAO (tempo em nanosegundos):\n" << std::endl;
+
 		benchmarkSetOperations(UNION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
+		output << "\tINTERSECAO (tempo em nanosegundos):\n" << std::endl;
+
 		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		output << "\tDIFERENCA (tempo em nanosegundos):\n" << std::endl;
 
 		benchmarkSetOperations(DIFF, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
@@ -321,11 +357,17 @@ int main() {
 		insertCrescentData(0, i, stdms_1);
 		insertCrescentData(0, i, stdms_2);
 
+		output << "\n\tUNIAO (tempo em nanosegundos):\n" << std::endl;
+
 		benchmarkSetOperations(UNION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
+		output << "\tINTERSECAO (tempo em nanosegundos):\n" << std::endl;
+
 		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		output << "\tDIFERENCA (tempo em nanosegundos):\n" << std::endl;
 
 		benchmarkSetOperations(DIFF, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
@@ -339,18 +381,29 @@ int main() {
 
 		output << "\n\tElementos aleatórios:" << std::endl;
 
-		insertRandomData(i, dams_1);
-		insertRandomData(i, dams_2);
-		insertRandomData(i, rbtms_1);
-		insertRandomData(i, rbtms_2);
-		insertRandomData(i, stdms_1);
-		insertRandomData(i, stdms_2);
+		// Os mesmos dados aleatórios são usados em cada estrutura
+		// para manter a comparação justa
+		std::vector<int> random_data;
+		generateRandomData(i, random_data);
+
+		insertRandomData(i, dams_1, random_data);
+		insertRandomData(i, dams_2, random_data);
+		insertRandomData(i, rbtms_1, random_data);
+		insertRandomData(i, rbtms_2, random_data);
+		insertRandomData(i, stdms_1, random_data);
+		insertRandomData(i, stdms_2, random_data);
+
+		output << "\n\tUNIAO (tempo em nanosegundos):\n" << std::endl;
 
 		benchmarkSetOperations(UNION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
 
+		output << "\tINTERSECAO (tempo em nanosegundos):\n" << std::endl;
+
 		benchmarkSetOperations(INTERSECTION, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
+
+		output << "\tDIFERENCA (tempo em nanosegundos):\n" << std::endl;
 
 		benchmarkSetOperations(DIFF, dams_1, dams_2,
 			rbtms_1, rbtms_2, stdms_1, stdms_2, output);
