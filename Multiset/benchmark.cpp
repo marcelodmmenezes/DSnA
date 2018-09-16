@@ -221,9 +221,9 @@ void benchmarkSetOperations(BenchmarkType type,
 	clock = std::chrono::high_resolution_clock::now();
 
 	// As operações entre conjuntos da algorithm requerem
-	// um novo conjunto para se armazenar os dados
+	// um novo conjunto para se armazenar os dados.
 	// A criação do conjunto auxiliar entra na contagem do tempo pois as
-	// implementações anteriores criam o conjunto nas operações
+	// implementações anteriores criam o conjunto nas operações.
 	// std::back_inserter para melhorar a eficiência de inserção
 
 	std::vector<int> aux;
@@ -258,7 +258,6 @@ int main() {
 	std::multiset<int> stdms_1, stdms_2;
 
 	// Para ficar fácil de redirecionar a saída caso necessário
-
 #ifdef WRITE_TO_FILE
 	std::ofstream output;
 	output.open("output.txt", std::ios::out);

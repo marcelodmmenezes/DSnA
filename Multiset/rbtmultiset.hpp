@@ -525,6 +525,8 @@ void RBTMultiset<T>::printTree(int height, RBTNode<T>* node) {
 
 		SetConsoleTextAttribute(console, default_color);
 
+		delete info;
+
 #endif	// Coisas do sistema operacional
 
 		printTree(height + 1, node->left);

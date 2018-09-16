@@ -18,18 +18,22 @@
 using namespace std;
 
 
+void clear() {
+#ifdef __unix__
+	system("reset");
+#elif defined _WIN32
+	system("cls");
+#endif
+}
+
 void getData(int ms, ODAMultiset<int>& oda, RBTMultiset<int>& rbt) {
 	long long n;
 	string input;
 
-#ifdef __unix__
-		system("reset");
-#elif defined _WIN32
-		system("cls");
-#endif
+	clear();
 
-	cout << "Insert multiset" << (ms == 1 ? " A " : " B ")
-		<< "elements one at a time (integers (0 to finish)):\n" << endl;
+	cout << "Insert multiset " << (char)(ms + 'A')
+		<< " elements (integers, one at a time (0 to finish)):\n" << endl;
 
 	rbt.printTree();
 
@@ -48,25 +52,16 @@ void getData(int ms, ODAMultiset<int>& oda, RBTMultiset<int>& rbt) {
 		oda.insert(n);
 		rbt.insert(n);
 
-#ifdef __unix__
-		system("reset");
-#elif defined _WIN32
-		system("cls");
-#endif
+		clear();
 
-		cout << "Insert multiset" << (ms == 1 ? " A " : " B ")
-			<< "elements one at a time (integers (0 to finish)):\n" << endl;
+		cout << "Insert multiset " << (char)(ms + 'A')
+			<< " elements (integers, one at a time (0 to finish)):\n" << endl;
 
 		rbt.printTree();
 	}
-
-#ifdef __unix__
-		system("reset");
-#elif defined _WIN32
-		system("cls");
-#endif
+	
+	clear();
 }
-
 
 int main() {
 	std::ios_base::sync_with_stdio(false);
@@ -74,8 +69,8 @@ int main() {
 	ODAMultiset<int> oda1, oda2;
 	RBTMultiset<int> rbt1, rbt2;
 
-	getData(1, oda1, rbt1);
-	getData(2, oda2, rbt2);
+	getData(0, oda1, rbt1);
+	getData(1, oda2, rbt2);
 
 	cout << "----------------------------- Ordered Dynamic Array:\n" << endl;
 	
