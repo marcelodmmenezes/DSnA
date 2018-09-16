@@ -29,7 +29,7 @@ void getData(int ms, ODAMultiset<int>& oda, RBTMultiset<int>& rbt) {
 #endif
 
 	cout << "Insert multiset" << (ms == 1 ? " A " : " B ")
-		<< "elements (integers (0 to finish)):\n" << endl;
+		<< "elements one at a time (integers (0 to finish)):\n" << endl;
 
 	rbt.printTree();
 
@@ -55,7 +55,7 @@ void getData(int ms, ODAMultiset<int>& oda, RBTMultiset<int>& rbt) {
 #endif
 
 		cout << "Insert multiset" << (ms == 1 ? " A " : " B ")
-			<< "elements (integers (0 to finish)):\n" << endl;
+			<< "elements one at a time (integers (0 to finish)):\n" << endl;
 
 		rbt.printTree();
 	}

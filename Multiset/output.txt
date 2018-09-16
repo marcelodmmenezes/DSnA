@@ -4,97 +4,97 @@ Comparacao de manipulacao de dados:
 
 	Tempo de insercao de dados ordenados de forma crescente (nanosegundos):
 
-	oda : 0
-	rbt : 1000600
-	std : 0
+	oda : 38152
+	rbt : 142347
+	std : 97143
 
 	Tempo de insercao de dados ordenados de forma decrescente (nanosegundos):
 
-	oda : 0
-	rbt : 0
-	std : 999700
+	oda : 469681
+	rbt : 119263
+	std : 69571
 
 	Tempo de insercao de dados aleatorios (nanosegundos):
 
-	oda : 0
-	rbt : 0
-	std : 0
+	oda : 337914
+	rbt : 113814
+	std : 128561
 
 	Tempo de 1000 consultas aleatorias (nanosegundos):
 
-	oda : 0
-	rbt : 0
-	std : 0
+	oda : 58670
+	rbt : 35587
+	std : 60594
 
 	Tempo de 1000 remocoes aleatorias (nanosegundos):
 
-	oda : 1000600
-	rbt : 0
-	std : 0
+	oda : 69570
+	rbt : 69571
+	std : 69570
 
 10000 elementos:
 
 	Tempo de insercao de dados ordenados de forma crescente (nanosegundos):
 
-	oda : 0
-	rbt : 1000200
-	std : 1000300
+	oda : 438582
+	rbt : 1164103
+	std : 915637
 
 	Tempo de insercao de dados ordenados de forma decrescente (nanosegundos):
 
-	oda : 45042100
-	rbt : 883300
-	std : 994500
+	oda : 44034908
+	rbt : 999314
+	std : 968216
 
 	Tempo de insercao de dados aleatorios (nanosegundos):
 
-	oda : 18008500
-	rbt : 1001500
-	std : 1999300
+	oda : 17653269
+	rbt : 1539528
+	std : 1610380
 
 	Tempo de 10000 consultas aleatorias (nanosegundos):
 
-	oda : 994800
-	rbt : 1005100
-	std : 1000900
+	oda : 780344
+	rbt : 611387
+	std : 932630
 
 	Tempo de 10000 remocoes aleatorias (nanosegundos):
 
-	oda : 2995100
-	rbt : 2006900
-	std : 1000300
+	oda : 3756164
+	rbt : 1258360
+	std : 1292664
 
 100000 elementos:
 
 	Tempo de insercao de dados ordenados de forma crescente (nanosegundos):
 
-	oda : 3994400
-	rbt : 13029500
-	std : 9981900
+	oda : 4114918
+	rbt : 12118408
+	std : 10048286
 
 	Tempo de insercao de dados ordenados de forma decrescente (nanosegundos):
 
-	oda : 4462614300
-	rbt : 11002400
-	std : 10002400
+	oda : 4415262032
+	rbt : 10236158
+	std : 10163382
 
 	Tempo de insercao de dados aleatorios (nanosegundos):
 
-	oda : 227034200
-	rbt : 14003500
-	std : 24022000
+	oda : 225194838
+	rbt : 13950645
+	std : 24294845
 
 	Tempo de 100000 consultas aleatorias (nanosegundos):
 
-	oda : 8984200
-	rbt : 10017800
-	std : 19989800
+	oda : 8742156
+	rbt : 10378184
+	std : 19806106
 
 	Tempo de 100000 remocoes aleatorias (nanosegundos):
 
-	oda : 86019800
-	rbt : 16020400
-	std : 22026900
+	oda : 85853820
+	rbt : 15961135
+	std : 22088147
 
 Comparacao de operacoes entre multiconjuntos:
 
@@ -104,63 +104,63 @@ Comparacao de operacoes entre multiconjuntos:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 55784
+		rbt : 265458
+		std : 21801
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 1282
+		rbt : 6092
+		std : 6733
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 1000600
-		std : 0
+		oda : 20197
+		rbt : 125997
+		std : 11542
 
 
 	Elementos iguais:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 22442
+		rbt : 138179
+		std : 21159
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 999000
-		std : 0
+		oda : 21480
+		rbt : 142988
+		std : 17953
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 1603
+		rbt : 10580
+		std : 11221
 
 
 	Elementos aleatórios:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 21801
+		rbt : 159018
+		std : 21160
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 19236
+		rbt : 134653
+		std : 21480
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 1603
+		rbt : 15389
+		std : 16351
 
 10000 elementos:
 
@@ -168,63 +168,63 @@ Comparacao de operacoes entre multiconjuntos:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 984500
-		rbt : 3015000
-		std : 0
+		oda : 841258
+		rbt : 3146702
+		std : 376385
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 9938
+		rbt : 61235
+		std : 71173
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 1984800
-		std : 0
+		oda : 360356
+		rbt : 1517406
+		std : 98104
 
 
 	Elementos iguais:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 982300
-		std : 1017300
+		oda : 411331
+		rbt : 1577359
+		std : 164469
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 983300
-		std : 1017500
+		oda : 327654
+		rbt : 1451683
+		std : 162545
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 0
+		oda : 13144
+		rbt : 88486
+		std : 105478
 
 
 	Elementos aleatórios:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 1016900
-		rbt : 982700
-		std : 0
+		oda : 436339
+		rbt : 1433408
+		std : 259366
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 1018500
-		rbt : 982700
-		std : 0
+		oda : 324128
+		rbt : 1396859
+		std : 271229
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 0
-		std : 1017900
+		oda : 10901
+		rbt : 153889
+		std : 197170
 
 100000 elementos:
 
@@ -232,63 +232,63 @@ Comparacao de operacoes entre multiconjuntos:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 9018900
-		rbt : 38009100
-		std : 4984100
+		oda : 8907265
+		rbt : 39653892
+		std : 5203680
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 3018100
-		std : 1999900
+		oda : 127279
+		rbt : 2088718
+		std : 2296467
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 4000200
-		rbt : 16987000
-		std : 3017500
+		oda : 4001104
+		rbt : 17964893
+		std : 2665479
 
 
 	Elementos iguais:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 3942100
-		rbt : 18986000
-		std : 5016400
+		oda : 4382940
+		rbt : 19612464
+		std : 4396726
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 4095400
-		rbt : 19004200
-		std : 3891800
+		oda : 3980907
+		rbt : 18640721
+		std : 4431671
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 1017300
-		rbt : 3087000
-		std : 3896900
+		oda : 195246
+		rbt : 3498080
+		std : 3813873
 
 
 	Elementos aleatórios:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 998700
-		rbt : 6001000
-		std : 8001900
+		oda : 1318312
+		rbt : 6056479
+		std : 9387206
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 999900
-		rbt : 6003900
-		std : 7999400
+		oda : 842861
+		rbt : 5829173
+		std : 8576085
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 2003100
-		std : 7000300
+		oda : 64440
+		rbt : 1641800
+		std : 7745086
 
 1000000 elementos:
 
@@ -296,61 +296,61 @@ Comparacao de operacoes entre multiconjuntos:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 100015900
-		rbt : 400641100
-		std : 51104500
+		oda : 99178010
+		rbt : 410714944
+		std : 51142960
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 997400
-		rbt : 21050000
-		std : 22051900
+		oda : 1292023
+		rbt : 21210661
+		std : 22598223
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 49283400
-		rbt : 181093600
-		std : 25992100
+		oda : 48564364
+		rbt : 184938536
+		std : 25407331
 
 
 	Elementos iguais:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 48989700
-		rbt : 210095500
-		std : 43007000
+		oda : 50855380
+		rbt : 222424201
+		std : 47988243
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 49028200
-		rbt : 196042300
-		std : 42995200
+		oda : 47295744
+		rbt : 204435263
+		std : 45356107
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 1912800
-		rbt : 34001000
-		std : 37008200
+		oda : 1896998
+		rbt : 34227394
+		std : 36984566
 
 
 	Elementos aleatórios:
 
 	UNIAO (tempo em nanosegundos):
 
-		oda : 1000300
-		rbt : 6010900
-		std : 129545900
+		oda : 1184301
+		rbt : 7675516
+		std : 138856909
 
 	INTERSECAO (tempo em nanosegundos):
 
-		oda : 999600
-		rbt : 5999400
-		std : 129029000
+		oda : 884860
+		rbt : 7647303
+		std : 146299668
 
 	DIFERENCA (tempo em nanosegundos):
 
-		oda : 0
-		rbt : 2003800
-		std : 127026900
+		oda : 71494
+		rbt : 1777734
+		std : 136071525
 

@@ -575,7 +575,7 @@ template <typename T>
 RBTNode<T>* RBTMultiset<T>::minimum(RBTNode<T>* node) {
 	RBTNode<T>* itr = node;
 
-	while (itr->left)
+	while (itr && itr->left)
 		itr = itr->left;
 
 	return itr;
@@ -585,7 +585,7 @@ template <typename T>
 RBTNode<T>* RBTMultiset<T>::maximum(RBTNode<T>* node) {
 	RBTNode<T>* itr = node;
 
-	while (itr->right)
+	while (itr && itr->right)
 		itr = itr->right;
 
 	return itr;
@@ -593,7 +593,7 @@ RBTNode<T>* RBTMultiset<T>::maximum(RBTNode<T>* node) {
 
 template <typename T>
 RBTNode<T>* RBTMultiset<T>::successor(RBTNode<T>* node) {
-	if (node->right)
+	if (node && node->right)
 		return minimum(node->right);
 
 	RBTNode<T>* itr = node->parent;

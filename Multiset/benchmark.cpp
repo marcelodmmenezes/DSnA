@@ -21,6 +21,12 @@
 #include <vector>
 
 
+// Tive problemas com a consistência do high_resolution_clock no windows
+#ifdef _WIN32
+	#define high_resolution_clock steady_clock
+#endif	// _WIN32
+
+
 enum BenchmarkType {
 	INSERT_CRESCENT_DATA,
 	INSERT_DECRESCENT_DATA,
