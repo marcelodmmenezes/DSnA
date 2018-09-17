@@ -5,6 +5,9 @@
  *                                                                            *
  * Marcelo de Matos Menezes - 75254                                           *
  *                                                                            *
+ * Code for benchmarking the implemented multiset operations.                 *
+ * Compares the ODA, RBT and STL implementations.                             *
+ *                                                                            *
  *****************************************************************************/
 
 
@@ -24,7 +27,7 @@
 // Tive problemas com a consistência do high_resolution_clock no windows
 #ifdef _WIN32
 	#define high_resolution_clock steady_clock
-#endif	// _WIN32
+#endif
 
 
 enum BenchmarkType {
@@ -267,7 +270,7 @@ int main() {
 
 	output << "Comparacao de manipulacao de dados:\n" << std::endl;
 
-	for (int i = 1000; i <= 100000; i *= 10) {
+	for (int i = 1000; i <= 1000000; i *= 10) {
 		output << i << " elementos:\n" << std::endl;
 
 		output << "\tTempo de insercao de dados ordenados "
@@ -323,11 +326,11 @@ int main() {
 		// Todas as estruturas são ordenadas, portanto para esse teste
 		// não importa a ordem de inserção dos elementos
 		insertCrescentData(0, i, dams_1);
-		insertCrescentData(i + 1, 2 * (i + 1), dams_2);
+		insertCrescentData(i, 2 * i, dams_2);
 		insertCrescentData(0, i, rbtms_1);
-		insertCrescentData(i + 1, 2 * (i + 1), rbtms_2);
+		insertCrescentData(i, 2 * i, rbtms_2);
 		insertCrescentData(0, i, stdms_1);
-		insertCrescentData(i + 1, 2 * (i + 1), stdms_2);
+		insertCrescentData(i, 2 * i, stdms_2);
 
 		output << "\n\tUNIAO (tempo em nanosegundos):\n" << std::endl;
 

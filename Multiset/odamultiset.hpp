@@ -5,6 +5,8 @@
  *                                                                            *
  * Marcelo de Matos Menezes - 75254                                           *
  *                                                                            *
+ * Multiset implementation using an Ordered Dynamic Array as data strutcture. *
+ *                                                                            *
  *****************************************************************************/
 
 

@@ -5,6 +5,8 @@
  *                                                                            *
  * Marcelo de Matos Menezes - 75254                                           *
  *                                                                            *
+ * Multiset implementation using a Red-Black Tree as data structure.          *
+ *                                                                            *
  *****************************************************************************/
 
 

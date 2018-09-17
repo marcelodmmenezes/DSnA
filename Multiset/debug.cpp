@@ -5,6 +5,8 @@
  *                                                                            *
  * Marcelo de Matos Menezes - 75254                                           *
  *                                                                            *
+ * Simple program for visualizing and debugging the multiset operations.      *
+ *                                                                            *
  *****************************************************************************/
 
 
