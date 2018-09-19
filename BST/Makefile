@@ -8,5 +8,10 @@
 #*****************************************************************************/
 
 
+# Creates build folder case it doesn't exist
+create_directories:
+	if [ ! -d build ]; then mkdir build; fi
+
 main:
-	g++ main.cpp -std=c++11 -O3 -DUBST_DEBUG
+	make create_directories && g++ main.cpp -o build/ubst \
+	-std=c++11 -O3 -DUBST_DEBUG
