@@ -8,8 +8,14 @@
 #*****************************************************************************/
 
 
+# Creates build folder case it doesn't exist
+create_directories:
+	if [ ! -d build ]; then mkdir build; fi
+
 debug:
-	g++ debug.cpp -o debug -std=c++11 -DODA_DEBUG -DRBT_DEBUG
+	make create_directories && g++ debug.cpp -o build/debug \
+	-std=c++11 -DODA_DEBUG -DRBT_DEBUG
 
 benchmark:
-	g++ benchmark.cpp -o benchmark -std=c++11 -O3 -DWRITE_TO_FILE
+	make create_directories && g++ benchmark.cpp -o build/benchmark \
+	-std=c++11 -O3 -DWRITE_TO_FILE
