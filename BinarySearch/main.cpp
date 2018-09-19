@@ -6,6 +6,7 @@
  * Marcelo de Matos Menezes - 75254                                           *
  *                                                                            *
  * Just a simple program to test the implementations.                         *
+ * From the tests we can infer that cache is life. :)                         *
  *                                                                            *
  *****************************************************************************/
 
@@ -24,7 +25,7 @@
 using namespace std;
 
 
-const int SIZE = 1000;  // 1 million
+const int SIZE = 1000000000; // 1 billion
 
 
 template <typename T, typename F>
