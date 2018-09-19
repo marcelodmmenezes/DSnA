@@ -61,7 +61,7 @@ public:
 	bool remove(const T& item);
 
 	// Returns the highest element in the tree (rightmost node).
-	T getHighest();
+	T* getHighest();
 
 	// Destroy the tree and free its memory
 	void clear();
@@ -169,13 +169,16 @@ bool UBST<T>::remove(const T& item) {
 }
 
 template <typename T>
-T UBST<T>::getHighest() {
+T* UBST<T>::getHighest() {
 	UBSTNode<T>* itr = m_root;
 
 	while (itr->right)
 		itr = itr->right;
 
-	return itr->item;
+	if (itr->item)
+		return &itr->item;
+	else
+		return nullptr;
 }
 
 template <typename T>
