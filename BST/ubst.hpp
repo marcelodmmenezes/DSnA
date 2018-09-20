@@ -84,6 +84,9 @@ private:
 
 	//------------------------------------------------------- Auxiliary Methods
 	void clear(UBSTNode<T>* node);
+
+	// Returns the lowest item from the subtree with parameter node as root.
+	UBSTNode<T>* minimum(UBSTNode<T>* node);
 	//-------------------------------------------------------------------------
 
 	UBSTNode<T>* m_root;
@@ -180,7 +183,25 @@ void UBST<T>::insert(const T& item) {
 
 template <typename T>
 bool UBST<T>::remove(const T& item) {
+	if (!m_root)
+		return false;
 
+	int height = 0;
+	UBSTNode<T>* itr = m_root;
+	UBSTNode<T>* parent;
+
+	// Searching for the item
+	while (itr) {
+		parent = itr;
+		height++; // Counting levels transversed
+
+		if (item == itr->item) // Already in tree
+			return;
+		else if (item < itr->item) // Lower children to the left
+			itr = itr->left;
+		else // Higher to the right
+			itr = itr->right;
+	}
 }
 
 template <typename T>
@@ -257,6 +278,16 @@ void UBST<T>::clear(UBSTNode<T>* node) {
 		clear(node->right);
 
 	delete node;
+}
+
+template <typename T>
+UBSTNode<T>* UBST<T>::minimum(UBSTNode<T>* node) {
+	UBSTNode<T>* itr = node;
+
+	while (itr && itr->left)
+		itr = itr->left;
+
+	return itr;
 }
 
 
