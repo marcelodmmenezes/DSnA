@@ -197,6 +197,28 @@ bool UBST<T>::remove(const T& item) {
 		else // Higher to the right
 			itr = itr->right;
 	}
+
+	if (itr->left && itr->right) {
+
+	}
+	else if (itr->right) {
+		if (itr == parent->left)
+			;
+		else
+			;
+	}
+	else if (itr->left) {
+
+	}
+	else { // Node to be removed is leaf
+		if (itr == parent->left) // Check if node is a left or right child
+			parent->left = nullptr;
+		else
+			parent->right = nullptr;
+
+		if (parent->left || parent->right) // Parent is not a leaf
+			m_num_leaves--;
+	}
 }
 
 template <typename T>

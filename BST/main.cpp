@@ -129,6 +129,8 @@ int main() {
 			else
 				cout << "The tree is empty.\n";
 
+			cout << "Enter an option:\n";
+
 			break;
 
 		case 4:
@@ -138,25 +140,29 @@ int main() {
 				cout << aux_i << " removed from the tree\n";
 			else
 				cout << "The tree is empty.\n";
+			
+			cout << "Enter an option:\n";
 
 			break;			
 		
 		case 5:
 			cout << "The number of items in the tree is "
-				 << tree.size() << "\n";
+				 << tree.size() << "\nEnter an option:\n";
 			break;
 
 		case 6:
-			cout << "The height of the tree is " << tree.height() << "\n";
+			cout << "The height of the tree is " << tree.height()
+				 << "\nEnter an option:\n";
 			break;
 
 		case 7:
-			cout << "The tree contains " << tree.countLeaves() << " leaves.\n";
+			cout << "The tree contains " << tree.countLeaves()
+				 << " leaves.\nEnter an option:\n";
 			break;
 
 		case 8:
 			cout << "The tree contains " << tree.countInnerNodes()
-				 << " inner nodes.\n";
+				 << " inner nodes.\nEnter an option:\n";
 			break;
 
 		case 9:
