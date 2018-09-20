@@ -60,8 +60,10 @@ public:
 	// Returns true if the item was in the tree, false otherwise.
 	bool remove(const T& item);
 
-	// Returns the highest element in the tree (rightmost node).
-	T* getHighest();
+	// If tree is empty, returns false.
+	// Otherwise, item receives the highest element
+	// in the tree (rightmost node) and the method returns true.
+	bool getHighest(T& item);
 
 	// Destroy the tree and free its memory
 	void clear();
@@ -85,6 +87,8 @@ private:
 	//-------------------------------------------------------------------------
 
 	UBSTNode<T>* m_root;
+
+	// Information stored to make some queries O(1).
 	unsigned m_size;
 	unsigned m_height;
 	unsigned m_num_leaves;
@@ -126,9 +130,12 @@ unsigned UBST<T>::countInnerNodes() const {
 //------------------------------------------------------------- Data management
 template <typename T>
 void UBST<T>::insert(const T& item) {
+	int height = 0;
+
 	if (!m_root) {
 		m_root = new UBSTNode<T>;
 		m_root->item = item;
+		height++;
 		m_num_leaves++;
 	}
 	else {
@@ -138,28 +145,36 @@ void UBST<T>::insert(const T& item) {
 		// Searching for the position to add the new item
 		while (itr) {
 			parent = itr;
+			height++; // Counting levels transversed
 
-			if (item < itr->item) // Lower children to the left
+			if (item == itr->item) // Already in tree
+				return;
+			else if (item < itr->item) // Lower children to the left
 				itr = itr->left;
-			else // Higher or equal to the right
+			else // Higher to the right
 				itr = itr->right;
 		}
+
+		height++; // Counting levels transversed
 
 		if (item < parent->item) {
 			parent->left = new UBSTNode<T>;
 			parent->left->item = item;
 		}
 		else {
-			parent->left = new UBSTNode<T>;
-			parent->left->item = item;
+			parent->right = new UBSTNode<T>;
+			parent->right->item = item;
 		}
 
-		// If the parent wasn't a leaf the number of leaves is incremented
+		// If the parent wasn't a leaf, the number of leaves is incremented
 		if (parent->left && parent->right)
 			m_num_leaves++;
 	}
+ 
+ 	// If true, the height has increased
+	if (height > m_height)
+		m_height = height;
 
-	// Size is always incremented on insertion
 	m_size++;
 }
 
@@ -169,16 +184,18 @@ bool UBST<T>::remove(const T& item) {
 }
 
 template <typename T>
-T* UBST<T>::getHighest() {
+bool UBST<T>::getHighest(T& item) {
+	if (!m_root)
+		return false;
+
 	UBSTNode<T>* itr = m_root;
 
 	while (itr->right)
 		itr = itr->right;
 
-	if (itr->item)
-		return &itr->item;
-	else
-		return nullptr;
+	item = itr->item;
+
+	return true;
 }
 
 template <typename T>
@@ -186,6 +203,7 @@ void UBST<T>::clear() {
 	if (m_root) {
 		clear(m_root);
 		m_size = m_height = m_num_leaves = 0u;
+		m_root = nullptr;
 	}
 }
 
@@ -204,9 +222,10 @@ void UBST<T>::printTree(int height, UBSTNode<T>* node) {
 	if (node) {
 		printTree(height + 1, node->right);
 
-		for (int i = 0; i < 9 * height; i++)
+		for (int i = 0; i < 8 * height; i++)
 			std::cout << " ";
 		std::cout << "|";
+
 		for (int i = 0; i < 6; i++)
 			std::cout << "-";
 
@@ -215,9 +234,10 @@ void UBST<T>::printTree(int height, UBSTNode<T>* node) {
 		printTree(height + 1, node->left);
 	}
 	else {
-		for (int i = 0; i < 9 * height; i++)
+		for (int i = 0; i < 8 * height; i++)
 			std::cout << " ";
 		std::cout << "|";
+
 		for (int i = 0; i < 6; i++)
 			std::cout << "-";
 
