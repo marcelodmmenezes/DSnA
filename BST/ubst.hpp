@@ -63,7 +63,8 @@ public:
 	// If tree is empty, returns false.
 	// Otherwise, item receives the highest element
 	// in the tree (rightmost node) and the method returns true.
-	bool getHighest(T& item);
+	// The element is removed from the tree if del is true.
+	bool getHighest(T& item, bool del = false);
 
 	// Destroy the tree and free its memory
 	void clear();
@@ -83,24 +84,22 @@ private:
 	//-------------------------------------------------------------------------
 
 	//------------------------------------------------------- Auxiliary Methods
+	unsigned height(UBSTNode<T>* node) const;
 	void clear(UBSTNode<T>* node);
-
 	// Returns the lowest item from the subtree with parameter node as root.
-	UBSTNode<T>* minimum(UBSTNode<T>* node);
+	UBSTNode<T>* minimum(UBSTNode<T>* node) const;
 	//-------------------------------------------------------------------------
 
 	UBSTNode<T>* m_root;
 
 	// Information stored to make some queries O(1).
 	unsigned m_size;
-	unsigned m_height;
 	unsigned m_num_leaves;
 };
 
 
 template <typename T>
-UBST<T>::UBST() : m_root(nullptr), m_size(0u),
-	m_height(0u), m_num_leaves(0u) {}
+UBST<T>::UBST() : m_root(nullptr), m_size(0u), m_num_leaves(0u) {}
 
 template <typename T>
 UBST<T>::~UBST() {
@@ -116,7 +115,7 @@ unsigned UBST<T>::size() const {
 
 template <typename T>
 unsigned UBST<T>::height() const {
-	return m_height;
+	return height(m_root);
 }
 
 template <typename T>
@@ -173,10 +172,6 @@ void UBST<T>::insert(const T& item) {
 		if (parent->left && parent->right)
 			m_num_leaves++;
 	}
- 
- 	// If true, the height has increased
-	if (height > m_height)
-		m_height = height;
 
 	m_size++;
 }
@@ -196,7 +191,7 @@ bool UBST<T>::remove(const T& item) {
 		height++; // Counting levels transversed
 
 		if (item == itr->item) // Already in tree
-			return;
+			break;
 		else if (item < itr->item) // Lower children to the left
 			itr = itr->left;
 		else // Higher to the right
@@ -205,7 +200,7 @@ bool UBST<T>::remove(const T& item) {
 }
 
 template <typename T>
-bool UBST<T>::getHighest(T& item) {
+bool UBST<T>::getHighest(T& item, bool del) {
 	if (!m_root)
 		return false;
 
@@ -216,6 +211,9 @@ bool UBST<T>::getHighest(T& item) {
 
 	item = itr->item;
 
+	if (del)
+		remove(item);
+
 	return true;
 }
 
@@ -223,7 +221,7 @@ template <typename T>
 void UBST<T>::clear() {
 	if (m_root) {
 		clear(m_root);
-		m_size = m_height = m_num_leaves = 0u;
+		m_size = m_num_leaves = 0u;
 		m_root = nullptr;
 	}
 }
@@ -270,6 +268,23 @@ void UBST<T>::printTree(int height, UBSTNode<T>* node) {
 
 //----------------------------------------------------------- Auxiliary Methods
 template <typename T>
+unsigned UBST<T>::height(UBSTNode<T>* node) const {
+	unsigned h = 0;
+
+	if (node) {
+		if (node->left)
+			h = height(node->left);
+
+		if (node->right)
+			h = std::max(h, height(node->right));
+
+		h++;
+	}
+
+	return h;
+}
+
+template <typename T>
 void UBST<T>::clear(UBSTNode<T>* node) {
 	if (node->left)
 		clear(node->left);
@@ -281,7 +296,7 @@ void UBST<T>::clear(UBSTNode<T>* node) {
 }
 
 template <typename T>
-UBSTNode<T>* UBST<T>::minimum(UBSTNode<T>* node) {
+UBSTNode<T>* UBST<T>::minimum(UBSTNode<T>* node) const {
 	UBSTNode<T>* itr = node;
 
 	while (itr && itr->left)

@@ -35,15 +35,16 @@ void printHeader() {
 		    "|                                                        |\n"
 		    "| Enter an option:                                       |\n"
 		    "|                                                        |\n"
-		    "| 1 - Insert item (integer)                              |\n"
-		    "| 2 - Remove item                                        |\n"
-		    "| 3 - Get highest item                                   |\n"
-		    "| 4 - Get number of itens                                |\n"
-		    "| 5 - Get tree height                                    |\n"
-		    "| 6 - Count leaves                                       |\n"
-		    "| 7 - Count inner nodes                                  |\n"
-		    "| 8 - Clear tree                                         |\n"
-		    "| 9 - Quit                                               |\n"
+		    "| 1  - Insert item (integer)                             |\n"
+		    "| 2  - Remove item                                       |\n"
+		    "| 3  - Get highest item                                  |\n"
+		    "| 4  - Remove highest item                               |\n"
+		    "| 5  - Get number of itens                               |\n"
+		    "| 6  - Get tree height                                   |\n"
+		    "| 7  - Count leaves                                      |\n"
+		    "| 8  - Count inner nodes                                 |\n"
+		    "| 9  - Clear tree                                        |\n"
+		    "| 10 - Quit                                              |\n"
 		    "|                                                        |\n"
 		    "*--------------------------------------------------------*\n";
 }
@@ -86,8 +87,8 @@ int main() {
 		printHeader();
 		tree.printTree();
 
-		while (menu_option < 1 || menu_option > 9) {
-			cout << "\nYou must enter an integer between 1 and 9,"
+		while (menu_option < 1 || menu_option > 10) {
+			cout << "\nYou must enter an integer between 1 and 10,"
 					" corresponding to one of the options above." << endl;
 			menu_option = input();
 		}
@@ -129,26 +130,36 @@ int main() {
 				cout << "The tree is empty.\n";
 
 			break;
-		
+
 		case 4:
+			aux_b = tree.getHighest(aux_i, true);
+
+			if (aux_b)
+				cout << aux_i << " removed from the tree\n";
+			else
+				cout << "The tree is empty.\n";
+
+			break;			
+		
+		case 5:
 			cout << "The number of items in the tree is "
 				 << tree.size() << "\n";
 			break;
 
-		case 5:
+		case 6:
 			cout << "The height of the tree is " << tree.height() << "\n";
 			break;
 
-		case 6:
+		case 7:
 			cout << "The tree contains " << tree.countLeaves() << " leaves.\n";
 			break;
 
-		case 7:
+		case 8:
 			cout << "The tree contains " << tree.countInnerNodes()
 				 << " inner nodes.\n";
 			break;
 
-		case 8:
+		case 9:
 			tree.clear();
 
 			clear();
@@ -158,6 +169,5 @@ int main() {
 			break;
 		}
 	}
-	while (menu_option != 9);
-
+	while (menu_option != 10);
 }
