@@ -21,7 +21,7 @@ using namespace std;
 
 void clear() {
 #ifdef __unix__
-	system("reset");
+	system("clear");
 #elif defined _WIN32
 	system("cls");
 #endif

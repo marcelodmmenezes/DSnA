@@ -8,6 +8,12 @@
 #*****************************************************************************/
 
 
+help:
+	@echo type \"make debug\" to compile the visualization program
+	@echo type \"make benchmark\" to compile the benchmark
+
+
+
 # Creates build folder case it doesn't exist
 create_directories:
 	if [ ! -d build ]; then mkdir build; fi

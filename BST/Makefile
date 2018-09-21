@@ -8,6 +8,9 @@
 #*****************************************************************************/
 
 
+help:
+	@echo type \"make main\" to compile
+
 # Creates build folder case it doesn't exist
 create_directories:
 	if [ ! -d build ]; then mkdir build; fi
