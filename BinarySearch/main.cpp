@@ -11,11 +11,6 @@
  *****************************************************************************/
 
 
-#ifdef _WIN32
-	#define high_resolution_clock steady_clock
-#endif
-
-
 #include "binarySearch.hpp"
 
 #include <chrono>
@@ -25,36 +20,35 @@
 using namespace std;
 
 
-const int SIZE = 1000000000; // 1 billion
+const int SIZE = 100000000; // 100 million
 
 
 template <typename T, typename F>
 void benchmark(const T* arr, int l, int u, F binarySearch) {
 	int pos;
 	unsigned time;
-	chrono::time_point<chrono::high_resolution_clock> clock;
 
 	cout << "Element 0 found at: ";
 
-	clock = chrono::high_resolution_clock::now();
+	auto clock = chrono::steady_clock::now();
 	pos = binarySearch(arr, 0, l, u);
-	time = (chrono::high_resolution_clock::now() - clock).count();
+	time = (chrono::steady_clock::now() - clock).count();
 
 	cout << pos << " - Took " << time << " nanoseconds\n";
 
 	cout << "Element " << SIZE - 1 << " found at: ";
 
-	clock = chrono::high_resolution_clock::now();
+	clock = chrono::steady_clock::now();
 	pos = binarySearch(arr, SIZE - 1, l, u);
-	time = (chrono::high_resolution_clock::now() - clock).count();
+	time = (chrono::steady_clock::now() - clock).count();
 
 	cout << pos << " - Took " << time << " nanoseconds\n";
 
 	cout << "Element " << (SIZE - 1) / 2 << " found at: ";
 
-	clock = chrono::high_resolution_clock::now();
+	clock = chrono::steady_clock::now();
 	pos = binarySearch(arr, (SIZE - 1) / 2, l, u);
-	time = (chrono::high_resolution_clock::now() - clock).count();
+	time = (chrono::steady_clock::now() - clock).count();
 
 	cout << pos << " - Took " << time << " nanoseconds\n";
 
@@ -62,9 +56,9 @@ void benchmark(const T* arr, int l, int u, F binarySearch) {
 
 	cout << "Element " << 2 * SIZE << " found at: ";
 
-	clock = chrono::high_resolution_clock::now();
+	clock = chrono::steady_clock::now();
 	pos = binarySearch(arr, 2 * SIZE, l, u);
-	time = (chrono::high_resolution_clock::now() - clock).count();
+	time = (chrono::steady_clock::now() - clock).count();
 
 	cout << pos << " - Took " << time << " nanoseconds\n";
 }

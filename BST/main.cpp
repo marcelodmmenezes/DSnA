@@ -110,10 +110,12 @@ int main() {
 			aux_b = tree.remove(aux_i);
 
 			if (aux_b) {
-				cout << "Item " << aux_i << " removed successfully.";
 				clear();
 				printHeader();
 				tree.printTree();
+
+				cout << "Item " << aux_i
+					 << " removed successfully.\nEnter an option:\n";
 			}
 			else
 				cout << "The tree does not contain " << aux_i << ".\n"
@@ -136,8 +138,13 @@ int main() {
 		case 4:
 			aux_b = tree.getHighest(aux_i, true);
 
-			if (aux_b)
-				cout << aux_i << " removed from the tree\n";
+			if (aux_b) {
+				clear();
+				printHeader();
+				tree.printTree();
+
+				cout << aux_i << " removed from the tree.\n";
+			}
 			else
 				cout << "The tree is empty.\n";
 			
@@ -147,12 +154,12 @@ int main() {
 		
 		case 5:
 			cout << "The number of items in the tree is "
-				 << tree.size() << "\nEnter an option:\n";
+				 << tree.size() << ".\nEnter an option:\n";
 			break;
 
 		case 6:
 			cout << "The height of the tree is " << tree.height()
-				 << "\nEnter an option:\n";
+				 << ".\nEnter an option:\n";
 			break;
 
 		case 7:

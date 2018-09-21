@@ -86,8 +86,6 @@ private:
 	//------------------------------------------------------- Auxiliary Methods
 	unsigned height(UBSTNode<T>* node) const;
 	void clear(UBSTNode<T>* node);
-	// Returns the lowest item from the subtree with parameter node as root.
-	UBSTNode<T>* minimum(UBSTNode<T>* node) const;
 	//-------------------------------------------------------------------------
 
 	UBSTNode<T>* m_root;
@@ -132,12 +130,9 @@ unsigned UBST<T>::countInnerNodes() const {
 //------------------------------------------------------------- Data management
 template <typename T>
 void UBST<T>::insert(const T& item) {
-	int height = 0;
-
 	if (!m_root) {
 		m_root = new UBSTNode<T>;
 		m_root->item = item;
-		height++;
 		m_num_leaves++;
 	}
 	else {
@@ -147,7 +142,6 @@ void UBST<T>::insert(const T& item) {
 		// Searching for the position to add the new item
 		while (itr) {
 			parent = itr;
-			height++; // Counting levels transversed
 
 			if (item == itr->item) // Already in tree
 				return;
@@ -156,8 +150,6 @@ void UBST<T>::insert(const T& item) {
 			else // Higher to the right
 				itr = itr->right;
 		}
-
-		height++; // Counting levels transversed
 
 		if (item < parent->item) {
 			parent->left = new UBSTNode<T>;
@@ -181,44 +173,98 @@ bool UBST<T>::remove(const T& item) {
 	if (!m_root)
 		return false;
 
-	int height = 0;
 	UBSTNode<T>* itr = m_root;
-	UBSTNode<T>* parent;
+	UBSTNode<T>* parent = nullptr;
 
 	// Searching for the item
 	while (itr) {
-		parent = itr;
-		height++; // Counting levels transversed
-
-		if (item == itr->item) // Already in tree
+		if (item == itr->item)
 			break;
-		else if (item < itr->item) // Lower children to the left
+		else if (item < itr->item) {
+			parent = itr;
 			itr = itr->left;
-		else // Higher to the right
+		}
+		else {
+			parent = itr;
 			itr = itr->right;
+		}
 	}
+
+	if (!itr) // Item not in tree
+		return false;
 
 	if (itr->left && itr->right) {
+		UBSTNode<T>* replacement = itr->right;
+		// Aux node to keep reference to replacement's parent
+		UBSTNode<T>* aux = nullptr;
 
-	}
-	else if (itr->right) {
-		if (itr == parent->left)
-			;
-		else
-			;
-	}
-	else if (itr->left) {
+		while (replacement && replacement->left) {
+			aux = replacement;
+			replacement = replacement->left;
+		}
 
-	}
-	else { // Node to be removed is leaf
-		if (itr == parent->left) // Check if node is a left or right child
-			parent->left = nullptr;
-		else
-			parent->right = nullptr;
+		if (aux) { // Replacement is not itr's right child
+			aux->left = replacement->right;
 
-		if (parent->left || parent->right) // Parent is not a leaf
-			m_num_leaves--;
+			// If replacement is leaf and it's father was not
+			if (!replacement->left && !replacement->right &&
+				aux->right)
+				m_num_leaves--;
+		}
+		else {
+			itr->right = replacement->right;
+
+			// If replacement is leaf
+			if (!replacement->left && !replacement->right)
+				m_num_leaves--;
+		}
+
+		itr->item = replacement->item;
+
+		delete replacement;
 	}
+	else {
+		if (itr->right) { // If the node has only the right child
+			if (parent) {
+				if (itr == parent->left)
+					parent->left = itr->right;
+				else
+					parent->right = itr->right;
+			}
+			else
+				m_root = itr->right;
+		}
+		else if (itr->left) { // If the node has only the left child
+			if (parent) {
+				if (itr == parent->left)
+					parent->left = itr->left;
+				else
+					parent->right = itr->left;
+			}
+			else
+				m_root = itr->left;
+		}
+		else { // Node to be removed is leaf
+			if (parent) {
+				if (itr == parent->left)
+					parent->left = nullptr;
+				else
+					parent->right = nullptr;
+			}
+			else
+				m_root = nullptr;
+
+			// Parent is not a leaf
+			if (!parent || parent->left || parent->right)
+				m_num_leaves--;
+		}
+
+		delete itr;
+	}
+
+	m_size--;
+
+	return true;
 }
 
 template <typename T>
@@ -315,16 +361,6 @@ void UBST<T>::clear(UBSTNode<T>* node) {
 		clear(node->right);
 
 	delete node;
-}
-
-template <typename T>
-UBSTNode<T>* UBST<T>::minimum(UBSTNode<T>* node) const {
-	UBSTNode<T>* itr = node;
-
-	while (itr && itr->left)
-		itr = itr->left;
-
-	return itr;
 }
 
 
