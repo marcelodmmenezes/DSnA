@@ -42,12 +42,11 @@ void visualDebug() {
 	for (int i = 0; i < SIZE; i++)
 		random[i] = rand() % 400 - 200;
 
-	copyArray(random, ordered, SIZE);
-
 	cout << "\nOriginal array: ";
-	printArray(ordered, SIZE);
+	printArray(random, SIZE);
 
 	cout << "Selection sort: ";
+	copyArray(random, ordered, SIZE);
 	selectionSort(ordered, SIZE);
 	printArray(ordered, SIZE);
 
@@ -126,6 +125,6 @@ int main() {
 	srand(time(nullptr));
 
 	visualDebug();
-	cout << endl;
+	cout << "MADAOFJ" << endl;
 	sortingBenchmark();
 }

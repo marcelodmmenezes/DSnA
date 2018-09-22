@@ -55,35 +55,77 @@ void insertionSort(T* arr, int size) {
 //------------------------------------------------------------------- Quicksort
 template <typename T>
 void quickSort(T* arr, int left, int right) {
-	if (left < right) {
-		int pivot = arr[right], i = left - 1, aux;
+	int pivot = arr[left], i = left, aux;
 
-		for (int j = left; j < right; j++) {
-			if (arr[j] < pivot) {
-				i++;
-				aux = arr[i];
-				arr[i] = arr[j];
-				arr[j] = aux;
-			}
+	for (int j = left + 1; j <= right; j++) {
+		if (arr[j] < pivot) {
+			i++;
+			aux = arr[i];
+			arr[i] = arr[j];
+			arr[j] = aux;
 		}
-
-		arr[right] = arr[i + 1];
-		arr[i + 1] = pivot;
-
-		quickSort(arr, left, i);
-		quickSort(arr, i + 2, right);
 	}
+
+	arr[left] = arr[i];
+	arr[i] = pivot;
+
+	if (left < i - 1)
+		quickSort(arr, left, i - 1);
+
+	if (i + 1 < right)
+		quickSort(arr, i + 1, right);
 }
 
 template <typename T>
 void quickSort(T* arr, int size) {
-	quickSort(arr, 0, size - 1);
+	if (0 < size - 1)
+		quickSort(arr, 0, size - 1);
 }
 //-----------------------------------------------------------------------------
 
 //------------------------------------------------------------------ Merge sort
 template <typename T>
-void mergeSort(T* arr, int size) {}
+void mergeSort(T* arr, T* merge_array, int left, int right) {
+	int mid = (left + right) / 2;
+
+	if (left < mid)
+		mergeSort(arr, merge_array, left, mid);
+
+	if (mid + 1 < right)
+		mergeSort(arr, merge_array, mid + 1, right);
+
+	// Merge
+	int i, j;
+
+	for (i = left; i <= mid; i++)
+		merge_array[i] = arr[i];
+
+	for (i = mid + 1; i <= right; i++)
+		merge_array[i] = arr[right + mid + 1 - i];
+
+	i = left;
+	j = right;
+
+	for (int k = left; k <= right; k++) {
+		if (merge_array[i] <= merge_array[j]) {
+			arr[k] = merge_array[i];
+			i++;
+		}
+		else {
+			arr[k] = merge_array[j];
+			j--;
+		}
+	}
+}
+
+template <typename T>
+void mergeSort(T* arr, int size) {
+	if (0 < size - 1) {
+		T* merge_array = new T[size];
+		mergeSort(arr, merge_array, 0, size - 1);
+		delete[] merge_array;
+	}
+}
 //-----------------------------------------------------------------------------
 
 //-------------------------------------------------------------------- Heapsort
