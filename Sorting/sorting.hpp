@@ -57,6 +57,7 @@ template <typename T>
 void quickSort(T* arr, int left, int right) {
 	int pivot = arr[left], i = left, aux;
 
+	// Elements lower than 'pivot' are put before higher.
 	for (int j = left + 1; j <= right; j++) {
 		if (arr[j] < pivot) {
 			i++;
@@ -66,6 +67,7 @@ void quickSort(T* arr, int left, int right) {
 		}
 	}
 
+	// 'pivot' is assigned to it's location.
 	arr[left] = arr[i];
 	arr[i] = pivot;
 
@@ -100,6 +102,8 @@ void mergeSort(T* arr, T* merge_array, int left, int right) {
 	for (i = left; i <= mid; i++)
 		merge_array[i] = arr[i];
 
+	// Elements are inserted from higher to lower in second part of
+	// auxiliary array, to make easier to add then to result later.
 	for (i = mid + 1; i <= right; i++)
 		merge_array[i] = arr[right + mid + 1 - i];
 
@@ -130,7 +134,9 @@ void mergeSort(T* arr, int size) {
 
 //-------------------------------------------------------------------- Heapsort
 template <typename T>
-void heapSort(T* arr, int size) {}
+void heapSort(T* arr, int size) {
+	
+}
 //-----------------------------------------------------------------------------
 
 
