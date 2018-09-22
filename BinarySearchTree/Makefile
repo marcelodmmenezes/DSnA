@@ -9,7 +9,7 @@
 
 
 help:
-	@echo type \"make main\" to compile
+	@echo type "make main" to compile
 
 # Creates build folder case it doesn't exist
 create_directories:

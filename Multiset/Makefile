@@ -9,8 +9,8 @@
 
 
 help:
-	@echo type \"make debug\" to compile the visualization program
-	@echo type \"make benchmark\" to compile the benchmark
+	@echo type "make debug" to compile the visualization program
+	@echo type "make benchmark" to compile the benchmark
 
 
 

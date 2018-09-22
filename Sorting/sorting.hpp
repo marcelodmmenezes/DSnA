@@ -17,11 +17,11 @@
 //-------------------------------------------------------------- Selection sort
 template <typename T>
 void selectionSort(T* arr, int size) {
-	for (int i = 0; i < size - 2; i++) {
+	for (int i = 0; i < size - 1; i++) {
 		int min = i;
 
 		// Searching for i-th minimum value
-		for (int j = i + 1; j < n - 1; j++)
+		for (int j = i + 1; j < size; j++)
 			if (arr[j] < arr[min])
 				min = j;
 
@@ -38,7 +38,7 @@ void selectionSort(T* arr, int size) {
 //-------------------------------------------------------------- Insertion sort
 template <typename T>
 void insertionSort(T* arr, int size) {
-	for (int i = 1; i < size - 1; i++) {
+	for (int i = 1; i < size; i++) {
 		int j = i;
 
 		// Moves the i-th element to its position in the sorted array
@@ -53,13 +53,18 @@ void insertionSort(T* arr, int size) {
 //-----------------------------------------------------------------------------
 
 //------------------------------------------------------------------- Quicksort
-
+template <typename T>
+void quickSort(T* arr, int size) {}
 //-----------------------------------------------------------------------------
 
 //------------------------------------------------------------------ Merge sort
+template <typename T>
+void mergeSort(T* arr, int size) {}
 //-----------------------------------------------------------------------------
 
 //-------------------------------------------------------------------- Heapsort
+template <typename T>
+void heapSort(T* arr, int size) {}
 //-----------------------------------------------------------------------------
 
 

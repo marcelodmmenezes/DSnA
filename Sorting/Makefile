@@ -9,12 +9,23 @@
 
 
 help:
-	@echo type "make main" to compile
+	@echo type "make sorting" to compile the sorting algorithms test
+	@echo type "make partialSorting" to compile the partial \
+	sorting algorithms test
+	@echo type "make benchmark" to compile the benchmark
 
 # Creates build folder case it doesn't exist
 create_directories:
 	if [ ! -d build ]; then mkdir build; fi
 
-main:
-	make create_directories && g++ main.cpp -o build/bs \
+sorting:
+	make create_directories && g++ sorting.cpp -o build/sorting \
+	-std=c++11 -O3
+
+paritalSorting:
+	make create_directories && g++ partialSorting.cpp -o build/partialSorting \
+	-std=c++11 -O3
+
+benchmark:
+	make create_directories && g++ benchmark.cpp -o build/benchmark \
 	-std=c++11 -O3
