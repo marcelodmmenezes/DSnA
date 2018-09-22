@@ -54,7 +54,42 @@ void insertionSort(T* arr, int size) {
 
 //------------------------------------------------------------------- Quicksort
 template <typename T>
-void quickSort(T* arr, int size) {}
+int partition(T* arr, int left, int right) {
+	int pivot = arr[right], i = left, j = right - 1, aux;
+
+	while (i < j) {
+		while (i < j && arr[i] < pivot)
+			i++;
+
+		while (i < j && arr[j] >= pivot)
+			j--;
+
+		if (i < j) {
+			aux = arr[i];
+			arr[i] = arr[j];
+			arr[j] = aux;
+		}
+	}
+
+	arr[right] = arr[i];
+	arr[i] = pivot;
+
+	return i;
+}
+
+template <typename T>
+void quickSort(T* arr, int left, int right) {
+	if (left < right) {
+		int p = partition(arr, left, right);
+		quickSort(arr, left, p - 1);
+		quickSort(arr, p + 1, right);
+	}
+}
+
+template <typename T>
+void quickSort(T* arr, int size) {
+	quickSort(arr, 0, size - 1);
+}
 //-----------------------------------------------------------------------------
 
 //------------------------------------------------------------------ Merge sort

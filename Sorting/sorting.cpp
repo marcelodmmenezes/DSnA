@@ -73,7 +73,7 @@ void visualDebug() {
 }
 
 void sortingBenchmark() {
-	const int SIZE = 100000;
+	const int SIZE = 10000;
 
 	// Using two arrays to preserve random elements between sorts
 	int random[SIZE], ordered[SIZE];
@@ -83,35 +83,38 @@ void sortingBenchmark() {
 	for (int i = 0; i < SIZE; i++)
 		random[i] = rand() % 400 - 200;
 
-	copyArray(random, ordered, SIZE);
-
-	cout << "Sorting 100000 random elements:\n\n";
+	cout << "Sorting 10000 random elements:\n\n";
 
 	cout << "Selection sort took: ";
+	copyArray(random, ordered, SIZE);
 	clock = chrono::steady_clock::now();
 	selectionSort(ordered, SIZE);
 	time = (chrono::steady_clock::now() - clock).count();
 	cout << setw(10) << time << " nanoseconds.\n";
 
 	cout << "Insertion sort took: ";
+	copyArray(random, ordered, SIZE);
 	clock = chrono::steady_clock::now();
 	insertionSort(ordered, SIZE);
 	time = (chrono::steady_clock::now() - clock).count();
 	cout << setw(10) << time << " nanoseconds.\n";
 
 	cout << "Quicksort took:      ";
+	copyArray(random, ordered, SIZE);
 	clock = chrono::steady_clock::now();
 	quickSort(ordered, SIZE);
 	time = (chrono::steady_clock::now() - clock).count();
 	cout << setw(10) << time << " nanoseconds.\n";
 
 	cout << "Merge sort took:     ";
+	copyArray(random, ordered, SIZE);
 	clock = chrono::steady_clock::now();
 	mergeSort(ordered, SIZE);
 	time = (chrono::steady_clock::now() - clock).count();
 	cout << setw(10) << time << " nanoseconds.\n";
 
 	cout << "Heapsort took:       ";
+	copyArray(random, ordered, SIZE);
 	clock = chrono::steady_clock::now();
 	heapSort(ordered, SIZE);
 	time = (chrono::steady_clock::now() - clock).count();
