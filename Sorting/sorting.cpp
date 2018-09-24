@@ -125,6 +125,6 @@ int main() {
 	srand(time(nullptr));
 
 	visualDebug();
-	cout << "MADAOFJ" << endl;
+	cout << endl;
 	sortingBenchmark();
 }

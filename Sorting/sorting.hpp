@@ -134,8 +134,45 @@ void mergeSort(T* arr, int size) {
 
 //-------------------------------------------------------------------- Heapsort
 template <typename T>
+void heapify(T* arr, int left, int right) {
+	int root = left, l, r, max, aux;
+
+	while (2 * root + 1 <= right) {
+		l = 2 * root + 1;
+		r = 2 * root + 2;
+
+		if (r <= right && arr[r] > arr[l])
+			max = r;
+		else
+			max = l;
+
+		if (arr[root] > arr[max])
+			return;
+
+		aux = arr[root];
+		arr[root] = arr[max];
+		arr[max] = aux;
+
+		root = max;
+	}
+}
+
+template <typename T>
 void heapSort(T* arr, int size) {
-	
+	int i;
+	T aux;
+
+	// Building heap
+	for (i = size / 2 - 1; i >= 0; i--)
+		heapify(arr, i, size - 1);
+
+	// Sorting the array
+	for (i = size - 1; i > 0; i--) {
+		aux = arr[0];
+		arr[0] = arr[i];
+		arr[i] = aux;
+		heapify(arr, 0, i - 1);
+	}
 }
 //-----------------------------------------------------------------------------
 
