@@ -100,7 +100,9 @@ void partialQuickSort(T* arr, int k, int left, int right) {
 	if (left < i - 1)
 		partialQuickSort(arr, k, left, i - 1);
 
-	if (i + 1 < right && i - left + 1 <= k)
+	// We only need to call the 'bigger' part of the array if the first
+	// part has less than k elements.
+	if (i + 1 < right && i - left < k)
 		partialQuickSort(arr, k, i + 1, right);
 }
 
@@ -113,10 +115,50 @@ void partialQuickSort(T* arr, int k, int size) {
 
 //---------------------------------------------------------- Partial merge sort
 template <typename T>
-void partialMergeSort(T* arr, T* merge_array, int k, int left, int right) {}
+void partialMergeSort(T* arr, T* merge_array, int k, int left, int right) {
+	int mid = (left + right) / 2;
+
+	if (left < mid)
+		partialMergeSort(arr, merge_array, k, left, mid);
+
+	if (mid + 1 < right)
+		partialMergeSort(arr, merge_array, k, mid + 1, right);
+
+	// Merge
+	int i, j;
+
+	for (i = left; i <= mid; i++)
+		merge_array[i] = arr[i];
+
+	// Elements are inserted from higher to lower in second part of
+	// auxiliary array, to make easier to add then to result later.
+	for (i = mid + 1; i <= right; i++)
+		merge_array[i] = arr[right + mid + 1 - i];
+
+	i = left;
+	j = right;
+
+	// We have to merge at maximum k elements
+	for (int it = left; it <= right && it <= left + k; it++) {
+		if (merge_array[i] <= merge_array[j]) {
+			arr[it] = merge_array[i];
+			i++;
+		}
+		else {
+			arr[it] = merge_array[j];
+			j--;
+		}
+	}
+}
 
 template <typename T>
-void partialMergeSort(T* arr, int k, int size) {}
+void partialMergeSort(T* arr, int k, int size) {
+	if (0 < size - 1) {
+		T* merge_array = new T[size];
+		partialMergeSort(arr, merge_array, k, 0, size - 1);
+		delete[] merge_array;
+	}
+}
 //-----------------------------------------------------------------------------
 
 //------------------------------------------------------------ Partial heapsort
