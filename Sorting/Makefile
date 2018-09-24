@@ -22,7 +22,7 @@ sorting:
 	make create_directories && g++ sorting.cpp -o build/sorting \
 	-std=c++11 -O3
 
-paritalSorting:
+partialSorting:
 	make create_directories && g++ partialSorting.cpp -o build/partialSorting \
 	-std=c++11 -O3
 

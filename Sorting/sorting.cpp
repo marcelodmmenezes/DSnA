@@ -17,6 +17,7 @@
 #include <iomanip>
 #include <iostream>
 
+
 using namespace std;
 
 
@@ -127,4 +128,5 @@ int main() {
 	visualDebug();
 	cout << endl;
 	sortingBenchmark();
+	cout << endl;
 }

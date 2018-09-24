@@ -25,7 +25,7 @@ void selectionSort(T* arr, int size) {
 			if (arr[j] < arr[min])
 				min = j;
 
-		// If there's a minor element, change its positions
+		// If there's a smaller element, change its positions
 		if (i != min) {
 			T aux = arr[i];
 			arr[i] = arr[min];
@@ -57,7 +57,7 @@ template <typename T>
 void quickSort(T* arr, int left, int right) {
 	int pivot = arr[left], i = left, aux;
 
-	// Elements lower than 'pivot' are put before higher.
+	// Elements smaller than 'pivot' are put before bigger.
 	for (int j = left + 1; j <= right; j++) {
 		if (arr[j] < pivot) {
 			i++;
@@ -159,15 +159,14 @@ void heapify(T* arr, int left, int right) {
 
 template <typename T>
 void heapSort(T* arr, int size) {
-	int i;
 	T aux;
 
 	// Building heap
-	for (i = size / 2 - 1; i >= 0; i--)
+	for (int i = size / 2 - 1; i >= 0; i--)
 		heapify(arr, i, size - 1);
 
 	// Sorting the array
-	for (i = size - 1; i > 0; i--) {
+	for (int i = size - 1; i > 0; i--) {
 		aux = arr[0];
 		arr[0] = arr[i];
 		arr[i] = aux;
