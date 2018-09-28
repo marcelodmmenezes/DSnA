@@ -19,6 +19,9 @@
 //------------------------------------------------------ Partial selection sort
 template <typename T>
 void partialSelectionSort(T* arr, int k, int size) {
+	if (k > size)
+		return;
+
 	// We only have to select the first k elements.
 	// The rest of the array can remain as it is.
 	for (int i = 0; i < k; i++) {
@@ -42,7 +45,10 @@ void partialSelectionSort(T* arr, int k, int size) {
 
 //------------------------------------------------------ Partial insertion sort
 template <typename T>
-void partialInsertionSort(T* arr, int k, int size) {	
+void partialInsertionSort(T* arr, int k, int size) {
+	if (k > size)
+		return;
+
 	// Firstly we make a common insertion sort for the first k elements.
 	for (int i = 1; i < k; i++) {
 		int j = i;
@@ -108,7 +114,7 @@ void partialQuickSort(T* arr, int k, int left, int right) {
 
 template <typename T>
 void partialQuickSort(T* arr, int k, int size) {
-	if (0 < size - 1)
+	if (k <= size && 0 < size - 1)
 		partialQuickSort(arr, k, 0, size - 1);
 }
 //-----------------------------------------------------------------------------
@@ -153,7 +159,7 @@ void partialMergeSort(T* arr, T* merge_array, int k, int left, int right) {
 
 template <typename T>
 void partialMergeSort(T* arr, int k, int size) {
-	if (0 < size - 1) {
+	if (k <= size && 0 < size - 1) {
 		T* merge_array = new T[size];
 		partialMergeSort(arr, merge_array, k, 0, size - 1);
 		delete[] merge_array;
@@ -163,7 +169,7 @@ void partialMergeSort(T* arr, int k, int size) {
 
 //------------------------------------------------------------ Partial heapsort
 template <typename T>
-void heapify(T* arr, int left, int right) {
+void minHeapify(T* arr, int left, int right) {
 	int root = left, l, r, min, aux;
 
 	while (2 * root + 1 <= right) {
@@ -188,18 +194,21 @@ void heapify(T* arr, int left, int right) {
 
 template <typename T>
 void partialHeapSort(T* arr, int k, int size) {
+	if (k > size)
+		return;
+
 	T aux;
 
 	// Building heap for all elements
 	for (int i = size / 2 - 1; i >= 0; i--)
-		heapify(arr, i, size - 1);
+		minHeapify(arr, i, size - 1);
 
-	// Sorting the k smallest elements
+	// Sorting the k smaller elements
 	for (int i = size - 1; i >= size - k; i--) {
 		aux = arr[0];
 		arr[0] = arr[i];
 		arr[i] = aux;
-		heapify(arr, 0, i - 1);
+		minHeapify(arr, 0, i - 1);
 	}
 
 	// Passing them to the start of the array

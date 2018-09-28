@@ -134,7 +134,7 @@ void mergeSort(T* arr, int size) {
 
 //-------------------------------------------------------------------- Heapsort
 template <typename T>
-void heapify(T* arr, int left, int right) {
+void maxHeapify(T* arr, int left, int right) {
 	int root = left, l, r, max, aux;
 
 	while (2 * root + 1 <= right) {
@@ -163,14 +163,14 @@ void heapSort(T* arr, int size) {
 
 	// Building heap
 	for (int i = size / 2 - 1; i >= 0; i--)
-		heapify(arr, i, size - 1);
+		maxHeapify(arr, i, size - 1);
 
 	// Sorting the array
 	for (int i = size - 1; i > 0; i--) {
 		aux = arr[0];
 		arr[0] = arr[i];
 		arr[i] = aux;
-		heapify(arr, 0, i - 1);
+		maxHeapify(arr, 0, i - 1);
 	}
 }
 //-----------------------------------------------------------------------------
