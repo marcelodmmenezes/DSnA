@@ -23,6 +23,9 @@
 using namespace std;
 
 
+const int NUMBER_OF_TESTS = 10;
+
+
 template <typename T>
 void copyArray(T* a, T* b, int size) {
 	for (int i = 0; i < size; i++)
@@ -31,51 +34,96 @@ void copyArray(T* a, T* b, int size) {
 
 void partialSortingBenchmark(int n, int k) {
 	// Using two arrays to preserve random elements between sorts
-	int* random;
+	int** random;
 	int* ordered;
-	unsigned time;
+	unsigned long long mean;
 	chrono::time_point<chrono::steady_clock> clock;
 
-	random = new int[n];
+	random = new int*[NUMBER_OF_TESTS];
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++)
+		random[i] = new int[n];
+
 	ordered = new int[n];
 
-	for (int i = 0; i < n; i++)
-		random[i] = rand();
+	for (int i = 0; i < NUMBER_OF_TESTS; i++)
+		for (int j = 0; j < n; j++)
+			random[i][j] = rand();
 
 	cout << "Partial selection sort took: ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	partialSelectionSort(ordered, k, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+
+	mean = 0ull;
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		partialSelectionSort(ordered, k, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
 
 	cout << "Partial insertion sort took: ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	partialInsertionSort(ordered, k, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+
+	mean = 0ull;
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		partialInsertionSort(ordered, k, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
+
+	mean = 0ull;
 
 	cout << "Partial quicksort took:      ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	partialQuickSort(ordered, k, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		partialQuickSort(ordered, k, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
+
+	mean = 0ull;
 
 	cout << "Partial merge sort took:     ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	partialMergeSort(ordered, k, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		partialMergeSort(ordered, k, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
+
+	mean = 0ull;
 
 	cout << "Partial heapsort took:       ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	partialHeapSort(ordered, k, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		partialHeapSort(ordered, k, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++)
+		delete[] random[i];
 
 	delete[] random;
 	delete[] ordered;
@@ -83,51 +131,99 @@ void partialSortingBenchmark(int n, int k) {
 
 void sortingBenchmark(int n) {
 	// Using two arrays to preserve random elements between sorts
-	int* random;
+	int** random;
 	int* ordered;
-	unsigned time;
+	unsigned long long mean;
 	chrono::time_point<chrono::steady_clock> clock;
 
-	random = new int[n];
+	random = new int*[NUMBER_OF_TESTS];
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++)
+		random[i] = new int[n];
+
 	ordered = new int[n];
 
-	for (int i = 0; i < n; i++)
-		random[i] = rand();
+	for (int i = 0; i < NUMBER_OF_TESTS; i++)
+		for (int j = 0; j < n; j++)
+			random[i][j] = rand();
 
 	cout << "Selection sort took: ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	selectionSort(ordered, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+
+	mean = 0ull;
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		selectionSort(ordered, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
 
 	cout << "Insertion sort took: ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	insertionSort(ordered, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+
+	mean = 0ull;
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		insertionSort(ordered, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
 
 	cout << "Quicksort took:      ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	quickSort(ordered, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+
+	mean = 0ull;
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		quickSort(ordered, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
 
 	cout << "Merge sort took:     ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	mergeSort(ordered, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+
+	mean = 0ull;
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		mergeSort(ordered, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
 
 	cout << "Heapsort took:       ";
-	copyArray(random, ordered, n);
-	clock = chrono::steady_clock::now();
-	heapSort(ordered, n);
-	time = (chrono::steady_clock::now() - clock).count();
-	cout << setw(10) << time << " nanoseconds.\n";
+
+	mean = 0ull;
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++) {
+		copyArray(random[i], ordered, n);
+		clock = chrono::steady_clock::now();
+		heapSort(ordered, n);
+		mean += (chrono::steady_clock::now() - clock).count();
+	}
+
+	mean /= NUMBER_OF_TESTS;
+
+	cout << setw(10) << mean << " nanoseconds.\n";
+
+	for (int i = 0; i < NUMBER_OF_TESTS; i++)
+		delete[] random[i];
 
 	delete[] random;
 	delete[] ordered;
@@ -139,6 +235,8 @@ int main() {
 
 	cout << "n = 1000, k = 100\n\n";
 	partialSortingBenchmark(1000, 100);
+	cout << "n = 1000, k = 250\n\n";
+	partialSortingBenchmark(1000, 250);
 	cout << "\nn = 1000, k = 500\n\n";
 	partialSortingBenchmark(1000, 500);
 	cout << "\nn = 1000, k = 1000\n\n";
@@ -149,10 +247,10 @@ int main() {
 	cout << "\nn = 10000, k = 100\n\n";
 	partialSortingBenchmark(10000, 100);
 	cout << "\nn = 10000, k = 1000\n\n";
-	partialSortingBenchmark(10000, 500);
+	partialSortingBenchmark(10000, 1000);
 	cout << "\nn = 10000, k = 5000\n\n";
 	partialSortingBenchmark(10000, 5000);
-	cout << "\nn = 10000, k = 1000\n\n";
+	cout << "\nn = 10000, k = 10000\n\n";
 	partialSortingBenchmark(10000, 10000);
 	cout << "\nn = 10000\n\n";
 	sortingBenchmark(10000);
@@ -160,7 +258,7 @@ int main() {
 	cout << "\nn = 100000, k = 1000\n\n";
 	partialSortingBenchmark(100000, 1000);
 	cout << "\nn = 100000, k = 10000\n\n";
-	partialSortingBenchmark(100000, 1000);
+	partialSortingBenchmark(100000, 10000);
 	cout << "\nn = 100000, k = 25000\n\n";
 	partialSortingBenchmark(100000, 25000);
 	cout << "\nn = 100000, k = 50000\n\n";
@@ -169,17 +267,4 @@ int main() {
 	partialSortingBenchmark(100000, 100000);
 	cout << "\nn = 100000\n\n";
 	sortingBenchmark(100000);
-
-	cout << "\nn = 500000, k = 1000\n\n";
-	partialSortingBenchmark(100000, 1000);
-	cout << "\nn = 500000, k = 25000\n\n";
-	partialSortingBenchmark(100000, 1000);
-	cout << "\nn = 500000, k = 100000\n\n";
-	partialSortingBenchmark(100000, 25000);
-	cout << "\nn = 500000, k = 250000\n\n";
-	partialSortingBenchmark(100000, 50000);
-	cout << "\nn = 500000, k = 500000\n\n";
-	partialSortingBenchmark(100000, 100000);
-	cout << "\nn = 500000\n\n";
-	sortingBenchmark(500000);
 }
