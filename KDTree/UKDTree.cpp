@@ -14,5 +14,5 @@
 
 
 int main() {
-	UKDTree<int> t;
+	UKDTree<double, 2> t;
 }

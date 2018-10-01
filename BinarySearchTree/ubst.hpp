@@ -66,7 +66,7 @@ public:
 	// The element is removed from the tree if del is true.
 	bool getHighest(T& item, bool del = false);
 
-	// Destroy the tree and free its memory
+	// Destroys the tree and frees its memory
 	void clear();
 	//-------------------------------------------------------------------------
 
