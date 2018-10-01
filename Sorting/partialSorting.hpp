@@ -99,7 +99,7 @@ void partialQuickSort(T* arr, int k, int left, int right) {
 		}
 	}
 
-	// 'pivot' is assigned to it's location.
+	// 'pivot' is assigned to its location.
 	arr[left] = arr[i];
 	arr[i] = pivot;
 

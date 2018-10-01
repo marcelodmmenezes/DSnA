@@ -67,7 +67,7 @@ void quickSort(T* arr, int left, int right) {
 		}
 	}
 
-	// 'pivot' is assigned to it's location.
+	// 'pivot' is assigned to its location.
 	arr[left] = arr[i];
 	arr[i] = pivot;
 
