@@ -17,4 +17,4 @@ create_directories:
 
 ukdt:
 	make create_directories && g++ UKDTree.cpp -o build/ukdtree \
-	-std=c++11 -O3
+	-std=c++11 -O3 -DUKDT_DEBUG
