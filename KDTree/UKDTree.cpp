@@ -33,7 +33,7 @@ void clear() {
 void printHeader() {
 	cout << "*--------------------------------------------------------*\n"
 		    "|                                                        |\n"
-		    "|       Umbalanced K-D Tree Visualization                |\n"
+		    "|           Umbalanced K-D Tree Visualization            |\n"
 		    "|                                                        |\n"
 		    "|                                                        |\n"
 		    "| Enter an option:                                       |\n"
@@ -173,15 +173,15 @@ int main() {
 
 			break;
 
-		case 4:/*
+		case 4:
 			tree.clear();
 
 			clear();
 			printHeader();
 			tree.printTree();
-*/
+
 			break;
 		}
 	}
-	while (menu_option != 4);
+	while (menu_option != 5);
 }

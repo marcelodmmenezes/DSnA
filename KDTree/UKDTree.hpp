@@ -141,8 +141,10 @@ bool UKDTree<T, K>::contains(T point[]) {
 
 template <typename T, size_t K>
 void UKDTree<T, K>::clear() {
-	clear(m_root);
-	m_root = nullptr;
+	if (m_root) {
+		clear(m_root);
+		m_root = nullptr;
+	}
 }
 
 #ifdef UKDT_DEBUG
