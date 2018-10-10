@@ -18,6 +18,9 @@
 
 #ifdef UKDT_DEBUG
 	#include <iostream>
+	#ifdef _WIN32
+		#include <windows.h>
+	#endif
 #endif
 
 
@@ -125,9 +128,9 @@ bool UKDTree<T, K>::contains(T point[]) {
 	while (itr) {
 		if (equals(itr->point, point))
 			return true;
-		if (itr->point[height % K] < point[height % K])
+		if (point[height % K] < itr->point[height % K])
 			itr = itr->left;
-		else if (itr->point[height % K] >= point[height % K])
+		else if (point[height % K] >= itr->point[height % K])
 			itr = itr->right;
 
 		height++;
@@ -156,24 +159,69 @@ void UKDTree<T, K>::printTree(int height, UKDTNode<T, K>* node) {
 	if (node) {
 		printTree(height + 1, node->right);
 
-		for (int i = 0; i < K + 8 * height; i++)
+		for (int i = 0; i < (K + 8) * height; i++)
 			std::cout << " ";
 		std::cout << "|";
 
 		for (int i = 0; i < 6; i++)
 			std::cout << "-";
 
-		std::cout << "(" << node->point[0];
 
-		for (int i = 1; i < K; i++)
-			std::cout << ", " << node->point[i];
+// The compared coordinate in each level is painted red
+#ifdef __unix__
+
+		if (height % K == 0)
+			std::cout << "(\033[31m" << node->point[0] << "\033[39m";
+		else
+			std::cout << node->point[0];
+
+		for (int i = 1; i < K; i++) {
+			if (i == height % K)
+				std::cout << ", \033[31m" << node->point[i] << "\033[39m";
+			else			
+				std::cout << ", " << node->point[i];
+		}
 
 		std::cout << ")" << std::endl;
+
+#elif defined _WIN32
+
+		auto console = GetStdHandle(STD_OUTPUT_HANDLE);
+	    auto *info = new CONSOLE_SCREEN_BUFFER_INFO();
+	    GetConsoleScreenBufferInfo(console, info);
+	    auto default_color = info->wAttributes;
+
+	    std::cout << "(";
+
+		if (height % K == 0) {
+			SetConsoleTextAttribute(console, 4);
+			std::cout << node->point[0];
+			SetConsoleTextAttribute(console, default_color);
+		}
+		else
+			std::cout << node->point[0];
+
+		for (int i = 1; i < K; i++) {
+			if (i == height % K) {
+				std::cout << ", ";
+				SetConsoleTextAttribute(console, 4);
+				std::cout << node->point[i];
+				SetConsoleTextAttribute(console, default_color);
+			}
+			else			
+				std::cout << ", " << node->point[i];
+		}
+
+		std::cout << ")" << std::endl;
+
+		delete info;
+
+#endif	// Operating system stuff
 
 		printTree(height + 1, node->left);
 	}
 	else {
-		for (int i = 0; i < K + 8 * height; i++)
+		for (int i = 0; i < (K + 8) * height; i++)
 			std::cout << " ";
 		std::cout << "|";
 

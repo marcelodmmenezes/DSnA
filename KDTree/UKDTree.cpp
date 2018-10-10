@@ -19,7 +19,7 @@
 using namespace std;
 
 
-#define DIMENSION 2
+#define DIMENSION 3
 
 
 void clear() {
@@ -40,9 +40,10 @@ void printHeader() {
 		    "|                                                        |\n"
 		    "| 1 - Insert " << DIMENSION << "-dimensional point          "
 		    "               |\n"
-		    "| 2 - Remove item                                        |\n"
-		    "| 3 - Clear tree                                         |\n"
-		    "| 4 - Quit                                               |\n"
+		    "| 2 - Remove point                                       |\n"
+		    "| 3 - Check if point is in tree                          |\n"
+		    "| 4 - Clear tree                                         |\n"
+		    "| 5 - Quit                                               |\n"
 		    "|                                                        |\n"
 		    "*--------------------------------------------------------*\n";
 }
@@ -95,9 +96,10 @@ int main() {
 	std::ios_base::sync_with_stdio(false);
 
 	int menu_option, aux_i;
+	int aux_point[DIMENSION];
 	bool aux_b;
 	UKDTree<int, DIMENSION> tree;
-	
+
 	clear();
 	printHeader();
 	tree.printTree();
@@ -118,12 +120,10 @@ int main() {
 		switch (menu_option) {
 		case 1:
 			cout << "Enter " << DIMENSION
-				<< " integer(s) representing a point's coordinates\n";
+				<< " integer(s) representing a point's coordinates:\n";
 			
-			int aux[DIMENSION];
-			input(aux);
-
-			tree.insert(aux);
+			input(aux_point);
+			tree.insert(aux_point);
 
 			clear();
 			printHeader();
@@ -150,7 +150,30 @@ int main() {
 */
 			break;
 
-		case 3:/*
+		case 3:
+			cout << "Enter " << DIMENSION
+				<< " integer(s) representing a point's coordinates:\n";
+			
+			input(aux_point);
+
+			if (tree.contains(aux_point))
+				cout << "\nThe tree contains the point (" << aux_point[0];
+			else
+				cout << "\nThe tree does not contain the point (" << aux_point[0];
+
+			for (int i = 1; i < DIMENSION; i++)
+				std::cout << ", " << aux_point[i];
+
+			std::cout << ")\nPress enter to continue..." << endl;
+			getchar();
+
+			clear();
+			printHeader();
+			tree.printTree();
+
+			break;
+
+		case 4:/*
 			tree.clear();
 
 			clear();
