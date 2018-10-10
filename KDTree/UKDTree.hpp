@@ -60,9 +60,6 @@ private:
 #ifdef UKDT_DEBUG
 	void printTree(int height, UKDTNode<T, K>* node);
 #endif
-	void insert(T point[], unsigned height);
-	bool contains(T point[], unsigned height);
-
 	// Point copy
 	inline void copy(T a[], const T b[]);
 
@@ -84,13 +81,59 @@ UKDTree<T, K>::~UKDTree() {
 }
 
 template <typename T, size_t K>
-inline void UKDTree<T, K>::insert(T point[]) {
-	insert(point, 0);
+void UKDTree<T, K>::insert(T point[]) {
+	if (!m_root) {
+		m_root = new UKDTNode<T, K>;
+		copy(m_root->point, point);
+		return;
+	}
+
+	UKDTNode<T, K>* itr = m_root;
+	UKDTNode<T, K>* parent = m_root;
+
+	int height = 0;
+
+	while (itr) {
+		parent = itr;
+
+		if (equals(itr->point, point))
+			return;
+		else if (point[height % K] < itr->point[height % K])
+			itr = itr->left;
+		else if (point[height % K] >= itr->point[height % K])
+			itr = itr->right;
+
+		height++;
+	}
+
+	if (point[(height - 1) % K] < parent->point[(height - 1) % K]) {
+		parent->left = new UKDTNode<T, K>;
+		copy(parent->left->point, point);
+	}
+	else {
+		parent->right = new UKDTNode<T, K>;
+		copy(parent->right->point, point);
+	}
 }
 
 template <typename T, size_t K>
-inline bool UKDTree<T, K>::contains(T point[]) {
-	return contains(point, 0);
+bool UKDTree<T, K>::contains(T point[]) {
+	UKDTNode<T, K>* itr = m_root;
+
+	int height = 0;
+
+	while (itr) {
+		if (equals(itr->point, point))
+			return true;
+		if (itr->point[height % K] < point[height % K])
+			itr = itr->left;
+		else if (itr->point[height % K] >= point[height % K])
+			itr = itr->right;
+
+		height++;
+	}
+
+	return false;
 }
 
 template <typename T, size_t K>
@@ -142,54 +185,6 @@ void UKDTree<T, K>::printTree(int height, UKDTNode<T, K>* node) {
 }
 
 #endif	// UKDT_DEBUG
-
-template <typename T, size_t K>
-void UKDTree<T, K>::insert(T point[], unsigned height) {
-	if (!m_root) {
-		m_root = new UKDTNode<T, K>;
-		copy(m_root->point, point);
-		return;
-	}
-
-	UKDTNode<T, K>* itr = m_root;
-	UKDTNode<T, K>* parent = m_root;
-
-	while (itr) {
-		parent = itr;
-
-		if (itr->point[height % K] < point[height % K])
-			itr = itr->left;
-		else if (itr->point[height % K] > point[height % K])
-			itr = itr->right;
-		else if (equals(itr->point, point))
-			return;
-	}
-
-	if (itr->point[height % K] > point[height % K]) {
-		parent->left = new UKDTNode<T, K>;
-		copy(parent->left->point, point);
-	}
-	else {
-		parent->right = new UKDTNode<T, K>;
-		copy(parent->right->point, point);
-	}
-}
-
-template <typename T, size_t K>
-bool UKDTree<T, K>::contains(T point[], unsigned height) {
-	UKDTNode<T, K>* itr = m_root;
-
-	while (itr) {
-		if (itr->point[height % K] < point[height % K])
-			itr = itr->left;
-		else if (itr->point[height % K] > point[height % K])
-			itr = itr->right;
-		else if (equals(itr->point, point))
-			return true;
-	}
-
-	return false;
-}
 
 template <typename T, size_t K>
 inline void UKDTree<T, K>::copy(T a[], const T b[]) {

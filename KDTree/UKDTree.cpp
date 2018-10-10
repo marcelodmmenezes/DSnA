@@ -12,7 +12,6 @@
 
 #include "UKDTree.hpp"
 
-#include <array>
 #include <cstdlib>
 #include <iostream>
 
@@ -54,7 +53,7 @@ int input() {
 	string input;
 
 	while (!valid_input) {
-		getline(cin, input);
+		cin >> input;
 
 		try {
 			n = stoi(input);
@@ -70,12 +69,14 @@ int input() {
 
 void input(int arr[]) {
 	int n;
-	bool valid_input = false;
+	bool valid_input;
 	string input;
 
 	for (int i = 0; i < DIMENSION; i++) {
+		valid_input = false;
+
 		while (!valid_input) {
-			getline(cin, input);
+			cin >> input;
 
 			try {
 				n = stoi(input);
@@ -149,13 +150,13 @@ int main() {
 */
 			break;
 
-		case 3:
+		case 3:/*
 			tree.clear();
 
 			clear();
 			printHeader();
 			tree.printTree();
-
+*/
 			break;
 		}
 	}
