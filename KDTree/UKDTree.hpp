@@ -45,6 +45,10 @@ public:
 	// Adds a new element to the tree
 	void insert(T point[]);
 
+	// 'value' receives the minimum value in the tree for the 'dim' dimension
+	// If the tree is empty returns false. Returns true otherwise
+	bool findMinimum(int dim, T& value);
+
 	// Returns true if the tree contains the element 'point', false otherwise
 	bool contains(T point[]);
 
@@ -63,13 +67,16 @@ private:
 #ifdef UKDT_DEBUG
 	void printTree(int height, UKDTNode<T, K>* node);
 #endif
+
+	T findMinimum(UKDTNode<T, K>* node, int dim, int height);
+	
+	void clear(UKDTNode<T, K>* node);
+
 	// Point copy
 	inline void copy(T a[], const T b[]);
 
 	// Point comparison
 	inline bool equals(const T a[], const T b[]) const;
-
-	void clear(UKDTNode<T, K>* node);
 
 	UKDTNode<T, K>* m_root;
 };
@@ -94,22 +101,25 @@ void UKDTree<T, K>::insert(T point[]) {
 	UKDTNode<T, K>* itr = m_root;
 	UKDTNode<T, K>* parent = m_root;
 
-	int height = 0;
+	int height = 0, dim;
 
 	while (itr) {
 		parent = itr;
+		dim = height % K;
 
 		if (equals(itr->point, point))
 			return;
-		else if (point[height % K] < itr->point[height % K])
+		else if (point[dim] < itr->point[dim])
 			itr = itr->left;
-		else if (point[height % K] >= itr->point[height % K])
+		else if (point[dim] >= itr->point[dim])
 			itr = itr->right;
 
 		height++;
 	}
 
-	if (point[(height - 1) % K] < parent->point[(height - 1) % K]) {
+	dim = (height - 1) % K;
+
+	if (point[dim] < parent->point[dim]) {
 		parent->left = new UKDTNode<T, K>;
 		copy(parent->left->point, point);
 	}
@@ -120,17 +130,29 @@ void UKDTree<T, K>::insert(T point[]) {
 }
 
 template <typename T, size_t K>
+bool UKDTree<T, K>::findMinimum(int dim, T& value) {
+	if (m_root) {
+		value = findMinimum(m_root, dim, 0);
+		return true;
+	}
+
+	return false;
+}
+
+template <typename T, size_t K>
 bool UKDTree<T, K>::contains(T point[]) {
 	UKDTNode<T, K>* itr = m_root;
 
-	int height = 0;
+	int height = 0, dim;
 
 	while (itr) {
+		dim = height % K;
+
 		if (equals(itr->point, point))
 			return true;
-		if (point[height % K] < itr->point[height % K])
+		if (point[dim] < itr->point[dim])
 			itr = itr->left;
-		else if (point[height % K] >= itr->point[height % K])
+		else if (point[dim] >= itr->point[dim])
 			itr = itr->right;
 
 		height++;
@@ -168,12 +190,13 @@ void UKDTree<T, K>::printTree(int height, UKDTNode<T, K>* node) {
 		for (int i = 0; i < 6; i++)
 			std::cout << "-";
 
-
 // The compared coordinate in each level is painted red
 #ifdef __unix__
 
+		std::cout << "(";
+
 		if (height % K == 0)
-			std::cout << "(\033[31m" << node->point[0] << "\033[39m";
+			std::cout << "\033[31m" << node->point[0] << "\033[39m";
 		else
 			std::cout << node->point[0];
 
@@ -237,6 +260,50 @@ void UKDTree<T, K>::printTree(int height, UKDTNode<T, K>* node) {
 #endif	// UKDT_DEBUG
 
 template <typename T, size_t K>
+T UKDTree<T, K>::findMinimum(UKDTNode<T, K>* node, int dim, int height) {
+	height %= K;
+
+	// If the current height has the 'dimension we are searching for minimum'
+	// as comparison key, we can search only on the left subtree.
+	if (height == dim) {
+		if (node->left)
+			findMinimum(node->left, dim, height + 1);
+		else
+			return node->point[dim];
+	}
+
+	// Otherwise, we need to search in both subtrees.
+	T minimum = node->point[dim];
+
+	if (node->left) {
+		T aux = findMinimum(node->left, dim, height + 1);
+
+		if (aux < minimum)
+			minimum = aux;
+	}
+
+	if (node->right) {
+		T aux = findMinimum(node->right, dim, height + 1);
+
+		if (aux < minimum)
+			minimum = aux;
+	}
+
+	return minimum;
+}
+
+template <typename T, size_t K>
+void UKDTree<T, K>::clear(UKDTNode<T, K>* node) {
+	if (node->left)
+		clear(node->left);
+
+	if (node->right)
+		clear(node->right);
+
+	delete node;
+}
+
+template <typename T, size_t K>
 inline void UKDTree<T, K>::copy(T a[], const T b[]) {
 	for (int i = 0; i < K; i++)
 		a[i] = b[i];	
@@ -249,17 +316,6 @@ inline bool UKDTree<T, K>::equals(const T a[], const T b[]) const {
 			return false;
 
 	return true;
-}
-
-template <typename T, size_t K>
-void UKDTree<T, K>::clear(UKDTNode<T, K>* node) {
-	if (node->left)
-		clear(node->left);
-
-	if (node->right)
-		clear(node->right);
-
-	delete node;
 }
 
 

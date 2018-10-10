@@ -42,8 +42,9 @@ void printHeader() {
 		    "               |\n"
 		    "| 2 - Remove point                                       |\n"
 		    "| 3 - Check if point is in tree                          |\n"
-		    "| 4 - Clear tree                                         |\n"
-		    "| 5 - Quit                                               |\n"
+		    "| 4 - Find minimum of a dimension                        |\n"
+		    "| 5 - Clear tree                                         |\n"
+		    "| 6 - Quit                                               |\n"
 		    "|                                                        |\n"
 		    "*--------------------------------------------------------*\n";
 }
@@ -61,11 +62,33 @@ int input() {
 			valid_input = true;
 		}
 		catch (...) {
-			cout << "\nYou must enter an integer." << endl;
+			cout << "You must enter an integer." << endl;
 		}
 	}
 
 	return n;
+}
+
+void input(int& dim) {
+	bool valid_input = false;
+	string input;
+
+	while (!valid_input) {
+		cin >> input;
+
+		try {
+			dim = stoi(input);
+
+			if (dim < 0 || dim >= DIMENSION)
+				throw 0;
+
+			valid_input = true;
+		}
+		catch (...) {
+			cout << "You must enter an integer between 0 and "
+				<< DIMENSION - 1 << "." << endl;
+		}
+	}
 }
 
 void input(int arr[]) {
@@ -84,7 +107,7 @@ void input(int arr[]) {
 				valid_input = true;
 			}
 			catch (...) {
-				cout << "\nYou must enter an integer." << endl;
+				cout << "You must enter an integer." << endl;
 			}
 		}
 
@@ -93,9 +116,9 @@ void input(int arr[]) {
 }
 
 int main() {
-	std::ios_base::sync_with_stdio(false);
+	ios_base::sync_with_stdio(false);
 
-	int menu_option, aux_i;
+	int menu_option, aux_i_1, aux_i_2;
 	int aux_point[DIMENSION];
 	bool aux_b;
 	UKDTree<int, DIMENSION> tree;
@@ -133,19 +156,19 @@ int main() {
 
 		case 2:/*
 			cout << "Enter a number to remove from the tree: ";
-			aux_i = input();
-			aux_b = tree.remove(aux_i);
+			aux_i_1 = input();
+			aux_b = tree.remove(aux_i_1);
 
 			if (aux_b) {
 				clear();
 				printHeader();
 				tree.printTree();
 
-				cout << "Item " << aux_i
+				cout << "Item " << aux_i_1
 					 << " removed successfully.\nEnter an option:\n";
 			}
 			else
-				cout << "The tree does not contain " << aux_i << ".\n"
+				cout << "The tree does not contain " << aux_i_1 << ".\n"
 					 << "Enter an option:\n";
 */
 			break;
@@ -162,9 +185,9 @@ int main() {
 				cout << "\nThe tree does not contain the point (" << aux_point[0];
 
 			for (int i = 1; i < DIMENSION; i++)
-				std::cout << ", " << aux_point[i];
+				cout << ", " << aux_point[i];
 
-			std::cout << ")\nPress enter to continue..." << endl;
+			cout << ")\nPress enter to continue..." << endl;
 			getchar();
 
 			clear();
@@ -174,6 +197,26 @@ int main() {
 			break;
 
 		case 4:
+			cout << "Which dimension (0..." << DIMENSION - 1 << ")?:\n";
+
+			input(aux_i_1);
+
+			if (tree.findMinimum(aux_i_1, aux_i_2))
+				cout << "\nThe minimum at " << aux_i_1
+					<< "-th dimension is " << aux_i_2;
+			else
+				cout << "The tree is empty";
+
+			cout << "\nPress enter to continue..." << endl;
+			getchar();
+
+			clear();
+			printHeader();
+			tree.printTree();	
+
+			break;
+
+		case 5:
 			tree.clear();
 
 			clear();
@@ -183,5 +226,5 @@ int main() {
 			break;
 		}
 	}
-	while (menu_option != 5);
+	while (menu_option != 6);
 }
