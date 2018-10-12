@@ -45,6 +45,9 @@ public:
 	// Adds a new element to the tree
 	void insert(T point[]);
 
+	// Removes point from the tree
+	void remove(T point[]);
+
 	// 'value' receives the minimum value in the tree for the 'dim' dimension
 	// If the tree is empty returns false. Returns true otherwise
 	bool findMinimum(int dim, T& value);
@@ -127,6 +130,11 @@ void UKDTree<T, K>::insert(T point[]) {
 		parent->right = new UKDTNode<T, K>;
 		copy(parent->right->point, point);
 	}
+}
+
+template <typename T, size_t K>
+void UKDTree<T, K>::remove(T point[]) {
+	
 }
 
 template <typename T, size_t K>

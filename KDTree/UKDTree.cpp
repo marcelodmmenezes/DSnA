@@ -10,7 +10,7 @@
  *****************************************************************************/
 
 
-#include "UKDTree.hpp"
+#include "ukdTree.hpp"
 
 #include <cstdlib>
 #include <iostream>
