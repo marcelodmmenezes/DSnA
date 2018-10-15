@@ -16,5 +16,5 @@ create_directories:
 	if [ ! -d build ]; then mkdir build; fi
 
 ukdt:
-	make create_directories && g++ UKDTree.cpp -o build/ukdtree \
+	make create_directories && g++ ukdTree.cpp -o build/ukdtree \
 	-std=c++11 -O3 -DUKDT_DEBUG
