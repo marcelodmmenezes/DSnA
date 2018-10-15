@@ -42,14 +42,18 @@ public:
 	~UKDTree();
 
 	//--------------------------------------------------------- Data management
-	// Adds a new element to the tree
+	// Adds a new element to the tree.
 	void insert(T point[]);
 
-	// 'value' receives the minimum value in the tree for the 'dim' dimension
-	// If the tree is empty returns false. Returns true otherwise
+	// Removes a point from the tree. Returns true if the point was found,
+	// false otherwise.
+	bool remove(T point[]);
+
+	// 'value' receives the minimum value in the tree for the 'dim' dimension.
+	// If the tree is empty returns false. Returns true otherwise.
 	bool findMinimum(int dim, T& value);
 
-	// Returns true if the tree contains the element 'point', false otherwise
+	// Returns true if the tree contains the element 'point', false otherwise.
 	bool contains(T point[]);
 
 	// Destroys the tree and frees its memory
@@ -72,10 +76,10 @@ private:
 	
 	void clear(UKDTNode<T, K>* node);
 
-	// Point copy
+	// Point copy.
 	inline void copy(T a[], const T b[]);
 
-	// Point comparison
+	// Point comparison.
 	inline bool equals(const T a[], const T b[]) const;
 
 	UKDTNode<T, K>* m_root;
@@ -127,6 +131,40 @@ void UKDTree<T, K>::insert(T point[]) {
 		parent->right = new UKDTNode<T, K>;
 		copy(parent->right->point, point);
 	}
+}
+
+template <typename T, size_t K>
+bool UKDTree<T, K>::remove(T point[]) {
+	if (!m_root)
+		return false;
+
+	UKDTNode<T, K>* itr = m_root;
+	UKDTNode<T, K>* parent = m_root;
+
+	int height = 0, dim;
+	bool found = false;
+
+	while (itr) {
+		parent = itr;
+		dim = height % K;
+
+		if (equals(itr->point, point)) {
+			found = true;
+			break;
+		}
+		else if (point[dim] < itr->point[dim])
+			itr = itr->left;
+		else if (point[dim] >= itr->point[dim])
+			itr = itr->right;
+
+		height++;
+	}
+
+	if (found) {
+
+	}
+
+	return false;
 }
 
 template <typename T, size_t K>
